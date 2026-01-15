@@ -10868,3 +10868,47 @@ textarea.form-control-lg {
     padding: 4rem 0;
     position: relative;
 }
+
+.navbar-logo {
+    height: 40px;
+    width: auto;
+    max-width: 160px;
+    object-fit: contain;
+    transform: none !important;
+    filter: none !important;
+    display: block;
+    background-color: rgba(0, 0, 0, 0.05); /* subtle contrast */
+    padding: 2px;
+    border-radius: 4px;
+}
+.questlog-title {
+    font-family: "Cinzel", serif; /* or any gothic font you prefer */
+    font-size: 1.8rem;
+    letter-spacing: 0.05em;
+    color: #f5e6c8 !important;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.xp-bar-container,
+.nav-item.d-flex {
+    margin-left: 1rem;
+}
+.xp-bar-container {
+    width: 100px;              /* adjust to taste */
+    height: 8px;               /* gives it actual thickness */
+    background-color: #444;    /* visible on dark navbar */
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.xp-bar-fill {
+    height: 100%;              /* ensures the fill is visible */
+    background-color: #28a745; /* bright green so you can see it */
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+h1, h2, h3, h4, h5, h6,
+.navbar-brand,
+.questlog-title {
+    font-family: 'Cinzel', serif;
+}
