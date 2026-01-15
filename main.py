@@ -248,6 +248,6 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port = 5002)
+    app.run(debug=False, port = 5002)
 
 # todo create dict to add titles to levels
