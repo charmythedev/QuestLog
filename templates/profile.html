@@ -1,0 +1,109 @@
+{% include 'header.html' %}
+<div class="hero-header">
+    <div class="container my-5">
+
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="display-5">Adventurer Profile</h1>
+            <p class="text-muted">Your journey continues...</p>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Left Column: Avatar + Stats -->
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0 profile-card">
+
+                    <div class="card-body text-center">
+
+                        <!-- Avatar -->
+                        <img src="{{ user.email | gravatar }}" class="rounded-circle mb-3" width="120">
+
+                        <h3 class="mb-0">{{ user.username }}</h3>
+                        <p class="text-muted">Level {{ user.level }}</p>
+
+                        <!-- XP Bar -->
+                        <div class="progress mb-3" style="height: 20px;">
+                            <div class="progress-bar bg-success"
+                                 role="progressbar"
+                                 style="width: {{ (user.current_xp / user.next_level_xp) * 100 }}%;">
+                                {{ user.current_xp }} / {{ user.next_level_xp }} XP
+                            </div>
+                        </div>
+
+                        <p class="small text-muted">
+                            Next level at {{ user.next_level_xp }} XP
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Active Quests -->
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0 profile-card">
+                    <div class="card-body">
+
+                        <h4 class="mb-4">Active Quests</h4>
+
+                        {% if todos %}
+                        <ul class="list-group">
+                            {% for todo in todos %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ todo.title }}</strong><br>
+                                    <small class="text-muted">
+                                        {{ todo.category }} quest • {{ todo.xp }} XP
+                                    </small>
+                                </div>
+
+                                {% if not todo.completed %}
+                                <form action="{{ url_for('turn_in', todo_id=todo.id) }}" method="POST">
+                                    <button class="btn btn-sm btn-success">Turn In</button>
+                                </form>
+                                {% else %}
+                                <span class="badge bg-secondary">Completed</span>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p class="text-muted">No quests yet. Visit the Quest Log to begin your journey.</p>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {% if user.completed_quests %}
+        <div class="card shadow-sm border-0 my-4 quest-card">
+            <div class="card-body">
+
+                <h2 class="mb-4">
+                    Completed Quests ({{ user.completed_quests|length }})
+                </h2>
+
+                <ul class="list-group list-group-flush">
+                    {% for quest in user.completed_quests %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+
+                    <span class="text-decoration-line-through fw-semibold">
+                        {{ quest.title }}
+                    </span>
+
+                        <small class="text-muted">
+                            {{ quest.date_completed.strftime("%b %d, %Y") }}
+                        </small>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% include 'footer.html' %}

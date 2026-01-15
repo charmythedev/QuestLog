@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>Quest Log</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="../static/assets/favicon.ico"/>
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="../static/css/styles.css" rel="stylesheet"/>
+</head>
+<body>
+<!-- Responsive navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container px-5">
+
+        <a class="navbar-brand" href="{{ url_for('index') }}">Quest Log</a>
+        {% if current_user.is_authenticated %}
+        <li class="nav-item d-flex align-items-center">
+
+            <a href="{{ url_for('profile') }}"><img src="{{ current_user.email | gravatar }}"
+                                                    class="rounded-circle me-2" width="32"></a>
+
+            <div class="xp-bar-container me-2">
+                <div class="xp-bar-fill"
+                     style="width: {{ (current_user.current_xp / current_user.next_level_xp) * 100 }}%;">
+                </div>
+            </div>
+
+            <span class="text-light">Lv {{ current_user.level }}</span>
+
+        </li>
+        {% endif %}
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                        href="{{ url_for('index') }}">Home</a></li>
+                {% if not current_user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Register</a></li>
+
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+                {% endif %}
+                {% if current_user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('quest_log') }}">Quest Log</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+
+                {% endif %}
+                <!--                        add logout-->
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Header-->
