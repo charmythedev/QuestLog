@@ -58,12 +58,16 @@
                                 </div>
 
                                 {% if not todo.completed %}
-                                <form action="{{ url_for('remove', todo_id=todo.id) }}" method="POST">
-                                    <button type="submit" class="btn btn-danger w-100">Remove</button>
-                                </form>
-                                <form action="{{ url_for('turn_in', todo_id=todo.id) }}" method="POST">
-                                    <button class="btn btn-sm btn-success">Turn In</button>
-                                </form>
+                                <div class="d-flex flex-column gap-2" style="width: 120px;">
+                                    <form action="{{ url_for('remove', todo_id=todo.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-danger btn-sm w-100">Remove</button>
+                                    </form>
+
+                                    <form action="{{ url_for('turn_in', todo_id=todo.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-success btn-sm w-100">Turn In</button>
+                                    </form>
+                                </div>
+
                                 {% else %}
                                 <span class="badge bg-secondary">Completed</span>
                                 {% endif %}
