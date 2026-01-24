@@ -27,4 +27,4 @@ Usage
 Add quests, complete them, and earn XP.
 
 License
-No license specified.
+MIT License

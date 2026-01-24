@@ -239,6 +239,27 @@ def turn_in(todo_id):
     #todo either remove todo from db or add it to new table "completed quests"
     return redirect(url_for("quest_log"))
 
+@app.route("/remove/<int:todo_id>", methods=["POST"])
+@login_required
+def remove(todo_id):
+
+        todo = db.session.get(Todo, todo_id)
+        if not todo:
+            flash("Quest does not exist!", "danger")
+            return redirect(url_for('quest_log'))
+
+        if todo.user != current_user:
+            flash("You do not have permission to do that!", "danger")
+            return redirect(url_for('quest_log'))
+
+        db.session.delete(todo)
+        db.session.commit()
+
+        return redirect(url_for("quest_log"))
+
+
+
+
 @app.route('/logout')
 @login_required
 def logout():
