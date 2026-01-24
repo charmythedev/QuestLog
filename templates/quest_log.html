@@ -22,7 +22,8 @@
                             <button type="submit" class="btn btn-success w-100">
                                 Turn In Quest
                             </button>
-                            <form action="{{ url_for('remove', todo_id=todo.id) }}" method="POST">
+                        </form>
+                        <form action="{{ url_for('remove', todo_id=todo.id) }}" method="POST">
                             <button type="submit" class="btn btn-danger w-100">
                                 Remove Quest
                             </button>

@@ -244,6 +244,8 @@ def turn_in(todo_id):
 def remove(todo_id):
 
         todo = db.session.get(Todo, todo_id)
+        todo.completed = False
+
         if not todo:
             flash("Quest does not exist!", "danger")
             return redirect(url_for('quest_log'))
