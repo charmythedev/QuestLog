@@ -7,6 +7,23 @@
     <div class="container my-4">
         <h1 class="mb-4 text-center">Quest Log</h1>
         <div class="row g-4">
+            <form method="get" class="d-flex gap-2 mb-3">
+                <select name="sort" class="form-select">
+                    <option value="">Sort By</option>
+                    <option value="date">Newest</option>
+
+                    <option value="title">Title</option>
+                </select>
+
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    <option value="main">Main</option>
+                    <option value="side">Side</option>
+
+                </select>
+
+                <button class="btn btn-primary">Apply</button>
+            </form>
             {% for todo in todos %}
             <div class="col-md-6 col-lg-4">
                 <div class="card shadow-sm h-100 border-0 quest-card">

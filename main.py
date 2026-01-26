@@ -209,6 +209,22 @@ def quest_log():
         flash("New Quest Added!", "success")
         return redirect(url_for('quest_log'))
 
+    query = Todo.query.filter_by(user_id=user.id)
+
+    sort = request.args.get('sort')
+    category = request.args.get("category")
+
+    if category:
+        query = query.filter_by(category=category)
+
+    if sort == "date":
+        query = query.order_by(Todo.date.desc())
+    elif sort == "title":
+        query = query.order_by(Todo.title.desc())
+
+    todos = query.all()
+
+
 
 
     return render_template("quest_log.html", user=user, todos=todos, date=date, form=form)
@@ -274,3 +290,4 @@ if __name__ == "__main__":
     app.run(debug=False, port = 5002)
 
 # todo create dict to add titles to levels
+# todo add filter and sortby functions in flask(html)
