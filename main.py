@@ -220,7 +220,7 @@ def quest_log():
     if sort == "date":
         query = query.order_by(Todo.date.desc())
     elif sort == "title":
-        query = query.order_by(Todo.title.desc())
+        query = query.order_by(Todo.title.asc())
 
     todos = query.all()
 
