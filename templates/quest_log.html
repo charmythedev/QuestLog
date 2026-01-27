@@ -1,8 +1,6 @@
 {% from "bootstrap5/form.html" import render_form %}
 {% include "header.html" %}
 
-<!--add for loop for todos (include button or checkmark to cross them off and grant xp)-->
-<!--where does the xp addition logic go? ill find out tomorrow, for now list todos-->
 <div class="hero-header">
     <div class="container my-4">
         <h1 class="mb-4 text-center">Quest Log</h1>
@@ -13,12 +11,18 @@
                     <option value="date">Newest</option>
 
                     <option value="title">Title</option>
+                    <option value="title">xp</option>
                 </select>
 
                 <select name="category" class="form-select">
                     <option value="">All Categories</option>
                     <option value="main">Main</option>
                     <option value="side">Side</option>
+                    <option value="side">Daily</option>
+                    <option value="side">Errand</option>
+                    <option value="side">Work</option>
+                    <option value="side">Personal</option>
+                    <option value="side">Other</option>
 
                 </select>
 

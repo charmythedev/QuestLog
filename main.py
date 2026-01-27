@@ -1,6 +1,4 @@
-
 from datetime import datetime
-
 from flask import Flask, abort, render_template, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
@@ -9,9 +7,7 @@ from flask_login import UserMixin, login_user, LoginManager, current_user, logou
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, Text, Boolean
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from forms import *
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
@@ -28,7 +24,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 # CREATE DATABASE ####
 class Base(DeclarativeBase):
     pass
-
 
 db = SQLAlchemy(model_class=Base)
 
@@ -78,11 +73,10 @@ class User(UserMixin, db.Model):
 
 
 with app.app_context():
-
-
     db.create_all()
 
-    ###### levelling test #####
+
+###### levelling logic #####
 def level_up(user):
     current_xp = user.current_xp
     xp_needed = user.next_level_xp
@@ -124,6 +118,23 @@ def productive_xp(user):
         return True
 
     return False
+
+def xp_value(todo):
+    xp_map = {
+        "main": 25,
+        "work": 15,
+        "errand": 10,
+        "daily": 10,
+        "side": 20,
+        "personal": 25,
+        "other": 10
+
+    }
+
+    return xp_map.get(todo.category, 5)
+
+
+#### Avatar ####
 
 gravatar = Gravatar(app,
                     size=100,
@@ -201,9 +212,9 @@ def quest_log():
     if form.validate_on_submit():
         new_todo = Todo(title=form.title.data,
                         category=form.category.data,
-                        xp=20 if form.category.data == "main" else 10,
                         completed=False,
                         user=current_user)
+        new_todo.xp = xp_value(new_todo)
         db.session.add(new_todo)
         db.session.commit()
         flash("New Quest Added!", "success")
@@ -221,6 +232,8 @@ def quest_log():
         query = query.order_by(Todo.date.desc())
     elif sort == "title":
         query = query.order_by(Todo.title.asc())
+    elif sort == "xp":
+        query = query.order_by(Todo.xp.desc())
 
     todos = query.all()
 
@@ -251,17 +264,13 @@ def turn_in(todo_id):
     if bonus:
         flash('5 quests in 1 day! BONUS XP +50', 'success')
     db.session.commit()
-
-    #todo either remove todo from db or add it to new table "completed quests"
     return redirect(url_for("quest_log"))
 
 @app.route("/remove/<int:todo_id>", methods=["POST"])
 @login_required
 def remove(todo_id):
-
         todo = db.session.get(Todo, todo_id)
         todo.completed = False
-
         if not todo:
             flash("Quest does not exist!", "danger")
             return redirect(url_for('quest_log'))
@@ -290,4 +299,3 @@ if __name__ == "__main__":
     app.run(debug=False, port = 5002)
 
 # todo create dict to add titles to levels
-# todo add filter and sortby functions in flask(html)

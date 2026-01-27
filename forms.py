@@ -34,7 +34,12 @@ class TodoForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     category = SelectField("Category",choices=[
         ("main", "Main Quest"),
-        ("side", "Side Quest")
+        ("side", "Side Quest"),
+        ("work", "Work"),
+        ("errand", "Errand"),
+        ("daily", "Daily Quest"),
+        ("personal", "Personal Quest"),
+        ('other', 'Other')
         ],
         validators=[DataRequired()])
     submit = SubmitField("Submit")
