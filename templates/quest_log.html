@@ -1,26 +1,27 @@
 {% from "bootstrap5/form.html" import render_form %}
 {% include "header.html" %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show text-center"
-                 role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                        aria-label="Close"></button>
-            </div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
-        </div>
-    </div>
-</div>
 
 <div class="hero-header">
     <div class="container my-4">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show text-center"
+                         role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+
         <h1 class="mb-4 text-center">Quest Log</h1>
         <div class="row g-4">
             <form method="get" class="d-flex gap-2 mb-3">
