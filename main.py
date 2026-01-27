@@ -196,7 +196,7 @@ def profile():
 @login_required
 def quest_log():
     user = current_user
-    todos = user.todos
+
     form = TodoForm()
     if form.validate_on_submit():
         new_todo = Todo(title=form.title.data,
@@ -236,8 +236,8 @@ def turn_in(todo_id):
     bonus = productive_xp(current_user)
 
     gain_xp(current_user)
-    level_up(current_user)
-    if level_up(current_user):
+    leveled = level_up(current_user)
+    if leveled:
         flash('LEVEL UP!', 'success')
     completed = CompletedQuest(
         user_id=current_user.id,
