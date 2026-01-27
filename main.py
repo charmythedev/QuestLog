@@ -248,7 +248,7 @@ def turn_in(todo_id):
     todo.completed = True
     bonus = productive_xp(current_user)
 
-    gain_xp(current_user)
+    xp_added = gain_xp(current_user)
     leveled = level_up(current_user)
     if leveled:
         flash('LEVEL UP!', 'success')
@@ -261,6 +261,8 @@ def turn_in(todo_id):
     db.session.add(completed)
 
     db.session.delete(todo)
+    if xp_added:
+        flash(f'{todo.xp} xp gained!', 'success')
     if bonus:
         flash('5 quests in 1 day! BONUS XP +50', 'success')
     db.session.commit()
