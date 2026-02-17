@@ -21,12 +21,11 @@ ckeditor = CKEditor(app)
 Bootstrap5(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
 
-# CREATE DATABASE ####
+#### CREATE DATABASE ####
 class Base(DeclarativeBase):
     pass
 
 db = SQLAlchemy(model_class=Base)
-
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -41,8 +40,6 @@ class Todo(db.Model):
     xp: Mapped[int] = mapped_column(Integer, nullable=False, default=10)
     completed: Mapped[bool] = mapped_column(default=False)
     xp_given: Mapped[bool] = mapped_column(default=False)
-
-
     user = relationship("User", back_populates="todos")
 
 class CompletedQuest(db.Model):
@@ -56,7 +53,6 @@ class CompletedQuest(db.Model):
 
     user = relationship("User", back_populates="completed_quests")
 
-
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -64,6 +60,7 @@ class User(UserMixin, db.Model):
     password: Mapped[str] = mapped_column(String(250), nullable=False)
     email: Mapped[str] = mapped_column(String(250),unique=True, nullable=False)
     level: Mapped[int] = mapped_column(Integer(), nullable=False, default=0)
+    title: Mapped[str] = mapped_column(String(250), nullable=False)
     current_xp: Mapped[int] = mapped_column(Integer(), nullable=False, default=0)
     next_level_xp = mapped_column(Integer, default=100)
     todos = relationship("Todo", back_populates="user", cascade="all, delete")
@@ -71,10 +68,8 @@ class User(UserMixin, db.Model):
     quests_completed = mapped_column(Integer, default=0)
     last_bonus_date = db.Column(db.Date, nullable=True)
 
-
 with app.app_context():
     db.create_all()
-
 
 ###### levelling logic #####
 def level_up(user):
@@ -128,20 +123,28 @@ def xp_value(todo):
         "side": 20,
         "personal": 25,
         "other": 10
-
     }
 
     return xp_map.get(todo.category, 5)
 
+LEVEL_TITLES = {
+    1: "Intrepid Taskling",
+    2: "Aspiring Errand Knight",
+    3: "Momentum Wrangler",
+    4: "Certified Doer of Things",
+    5: "Questline Navigator",
+    6: "Productivity Pathfinder",
+    7: "Master of Minor Miracles",
+    8: "Relentless Progress Adept",
+    9: "Champion of Checked Boxes",
+    10: "Grand Archmage of Getting Stuff Done"
+}
 
 #### Avatar ####
-
 gravatar = Gravatar(app,
                     size=100,
                     rating='g',
                     default='retro')
-
-
 
 ### BUILD FLASK ROUTES ###
 @login_manager.user_loader
@@ -166,8 +169,6 @@ def register():
         return redirect(url_for('index'))
     #todo change this to redirect(url_for('profile') or something later
     return render_template("register.html", form=form, date=date)
-
-
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -194,14 +195,13 @@ def login():
 def index():
     return render_template("index.html", date=date)
 
-
 @app.route("/profile")
 @login_required
 def profile():
     user = current_user
     todos = user.todos
+    user.title = LEVEL_TITLES.get(user.level, "Quester")
     return render_template("profile.html", user=user, todos=todos, date=date)
-
 
 @app.route("/QuestLog", methods=['GET', 'POST'])
 @login_required
@@ -237,9 +237,6 @@ def quest_log():
 
     todos = query.all()
 
-
-
-
     return render_template("quest_log.html", user=user, todos=todos, date=date, form=form)
 @app.route("/turn-in/<int:todo_id>", methods=["POST"])
 @login_required
@@ -257,9 +254,7 @@ def turn_in(todo_id):
         title=todo.title,
         xp=todo.xp
     )
-
     db.session.add(completed)
-
     db.session.delete(todo)
     if xp_added:
         flash(f'{todo.xp} xp gained!', 'success')
@@ -286,9 +281,6 @@ def remove(todo_id):
 
         return redirect(url_for("quest_log"))
 
-
-
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -296,8 +288,9 @@ def logout():
     flash("You have logged out.", "info")
     return redirect(url_for('index'))
 
-
 if __name__ == "__main__":
     app.run(debug=False, port = 5002)
 
+
 # todo create dict to add titles to levels
+
