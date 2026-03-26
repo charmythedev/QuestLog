@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask import Flask, abort, render_template, redirect, url_for, flash, request
+from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
 from flask_gravatar import Gravatar
@@ -19,7 +20,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 ckeditor = CKEditor(app)
 Bootstrap5(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', "sqlite:///local.db")
 
 #### CREATE DATABASE ####
 class Base(DeclarativeBase):
@@ -27,6 +28,7 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
+migrate = Migrate(app,db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -38,8 +40,10 @@ class Todo(db.Model):
     date: Mapped[datetime] = mapped_column(db.DateTime, default=datetime.utcnow, nullable=False)
     category: Mapped[str] = mapped_column(String(100), nullable=False)
     xp: Mapped[int] = mapped_column(Integer, nullable=False, default=10)
+    coins: Mapped[int] = mapped_column(Integer, nullable=False, default=5)
     completed: Mapped[bool] = mapped_column(default=False)
     xp_given: Mapped[bool] = mapped_column(default=False)
+    coins_received : Mapped[bool] = mapped_column(default=False)
     user = relationship("User", back_populates="todos")
 
 class CompletedQuest(db.Model):
@@ -63,13 +67,13 @@ class User(UserMixin, db.Model):
     title: Mapped[str] = mapped_column(String(250), nullable=False)
     current_xp: Mapped[int] = mapped_column(Integer(), nullable=False, default=0)
     next_level_xp = mapped_column(Integer, default=100)
+    current_coins: Mapped[int] = mapped_column(Integer(), nullable=False, default=0)
     todos = relationship("Todo", back_populates="user", cascade="all, delete")
     completed_quests = relationship("CompletedQuest", back_populates="user", cascade="all, delete")
     quests_completed = mapped_column(Integer, default=0)
     last_bonus_date = db.Column(db.Date, nullable=True)
 
-with app.app_context():
-    db.create_all()
+
 
 ###### levelling logic #####
 def level_up(user):
@@ -95,6 +99,17 @@ def gain_xp(user):
     user.current_xp = current_xp
     db.session.commit()
     return user.current_xp
+
+def gain_coins(user):
+    current_coins = user.current_coins
+    for task in user.todos:
+        if task.completed and not task.coins_received:
+
+            current_coins += task.coins
+            task.coins_received = True
+    user.current_coins = current_coins
+    db.session.commit()
+    return user.current_coins
 
 def productive_xp(user):
     streak = 5
@@ -126,6 +141,19 @@ def xp_value(todo):
     }
 
     return xp_map.get(todo.category, 5)
+
+def coin_value(todo):
+    coin_map = {
+        "main": 100,
+        "work": 50,
+        "errand": 20,
+        "daily": 35,
+        "side": 60,
+        "personal": 150,
+        "other": 10
+    }
+
+    return coin_map.get(todo.category, 5)
 
 LEVEL_TITLES = {
     1: "Intrepid Taskling",
@@ -201,6 +229,7 @@ def profile():
     user = current_user
     todos = user.todos
     user.title = LEVEL_TITLES.get(user.level, "Quester")
+    coins = user.current_coins
     return render_template("profile.html", user=user, todos=todos, date=date)
 
 @app.route("/QuestLog", methods=['GET', 'POST'])
@@ -215,6 +244,7 @@ def quest_log():
                         completed=False,
                         user=current_user)
         new_todo.xp = xp_value(new_todo)
+        new_todo.coins = coin_value(new_todo)
         db.session.add(new_todo)
         db.session.commit()
         flash("New Quest Added!", "success")
@@ -246,6 +276,7 @@ def turn_in(todo_id):
     bonus = productive_xp(current_user)
 
     xp_added = gain_xp(current_user)
+    gain_coins(current_user)
     leveled = level_up(current_user)
     if leveled:
         flash('LEVEL UP!', 'success')
@@ -260,7 +291,10 @@ def turn_in(todo_id):
         flash(f'{todo.xp} xp gained!', 'success')
     if bonus:
         flash('5 quests in 1 day! BONUS XP +50', 'success')
+    if todo.coins_received:
+        flash(f'+ {todo.coins} coins gained!', 'success')
     db.session.commit()
+
     return redirect(url_for("quest_log"))
 
 @app.route("/remove/<int:todo_id>", methods=["POST"])

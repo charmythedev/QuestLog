@@ -21,6 +21,7 @@
 
                         <h3 class="mb-0">{{ user.username }}</h3>
                         <p class="text-muted"><em>{{user.title}}</em></p>
+                        <p class="text-muted"><em>{{user.current_coins}}</em></p>
                         <p class="text-muted">Level {{ user.level }}</p>
 
                         <!-- XP Bar -->
@@ -31,6 +32,9 @@
                                 {{ user.current_xp }} / {{ user.next_level_xp }} XP
                             </div>
                         </div>
+<!--                        add some badges and coin stuff here-->
+
+
 
                         <p class="small text-muted">
                             Next level at {{ user.next_level_xp }} XP
