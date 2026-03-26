@@ -46,6 +46,8 @@ class Todo(db.Model):
     coins_received : Mapped[bool] = mapped_column(default=False)
     user = relationship("User", back_populates="todos")
 
+#new table altered in psql
+
 class CompletedQuest(db.Model):
     __tablename__ = "completed_quests"
 
