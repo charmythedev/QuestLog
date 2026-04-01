@@ -239,6 +239,8 @@ def profile():
 def quest_log():
     user = current_user
 
+    #create new quest form:
+
     form = TodoForm()
     if form.validate_on_submit():
         new_todo = Todo(title=form.title.data,
@@ -252,6 +254,9 @@ def quest_log():
         flash("New Quest Added!", "success")
         return redirect(url_for('quest_log'))
 
+    # Sorting and pagination logic
+
+    page = request.args.get('page', 1, type=int)
     query = Todo.query.filter_by(user_id=user.id)
 
     sort = request.args.get('sort')
@@ -267,7 +272,7 @@ def quest_log():
     elif sort == "xp":
         query = query.order_by(Todo.xp.desc())
 
-    todos = query.all()
+    todos = query.paginate(page=page, per_page=6)
 
     return render_template("quest_log.html", user=user, todos=todos, date=date, form=form)
 @app.route("/turn-in/<int:todo_id>", methods=["POST"])

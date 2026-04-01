@@ -47,7 +47,7 @@
 
                 <button class="btn btn-primary">Apply</button>
             </form>
-            {% for todo in todos %}
+            {% for todo in todos.items %}
             <div class="col-md-6 col-lg-4">
                 <div class="card shadow-sm h-100 border-0 quest-card">
                     <div class="card-body">
@@ -77,6 +77,30 @@
             </div>
             {% endfor %}
         </div>
+{#    pagination #}
+    <div class="d-flex justify-content-center my-4">
+
+    {% if todos.has_prev %}
+        <a class="btn btn-outline-primary mx-1"
+           href="{{ url_for('quest_log', page=todos.prev_num, sort=request.args.get('sort'), category=request.args.get('category')) }}">
+            Previous
+        </a>
+    {% endif %}
+
+    <span class="mx-3 align-self-center">
+        Page {{ todos.page }} of {{ todos.pages }}
+    </span>
+
+    {% if todos.has_next %}
+        <a class="btn btn-outline-primary mx-1"
+           href="{{ url_for('quest_log', page=todos.next_num, sort=request.args.get('sort'), category=request.args.get('category')) }}">
+            Next
+        </a>
+    {% endif %}
+
+</div>
+
+    </div>
         <hr>
         <br>
 
