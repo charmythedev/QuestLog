@@ -271,6 +271,8 @@ def quest_log():
         query = query.order_by(Todo.title.asc())
     elif sort == "xp":
         query = query.order_by(Todo.xp.desc())
+    else:
+        query = query.order_by(Todo.date.desc())
 
     todos = query.paginate(page=page, per_page=6)
 
