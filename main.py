@@ -106,7 +106,7 @@ def gain_xp(user):
     user.current_xp = current_xp
     db.session.commit()
     return user.current_xp
-
+# todo return the xp gained not the total xp
 def gain_coins(user):
     current_coins = user.current_coins
     for task in user.todos:
@@ -117,6 +117,7 @@ def gain_coins(user):
     user.current_coins = current_coins
     db.session.commit()
     return user.current_coins
+# todo return the coins gained not total coins
 
 
 def multiplier(user):
@@ -168,7 +169,7 @@ def xp_value(todo, user):
         "other": base//22
     }
 
-    return xp_map.get(todo.category, 5)
+    return int(xp_map.get(todo.category, 5))
 
 def coin_value(todo):
     coin_map = {
@@ -312,8 +313,10 @@ def turn_in(todo_id):
     todo = db.session.get(Todo, todo_id)
     todo.completed = True
     bonus = productive_xp(current_user)
+    xp_before = current_user.current_xp
 
     xp_added = gain_xp(current_user)
+    xp_gained = xp_added - xp_before
     gain_coins(current_user)
     leveled = level_up(current_user)
     if leveled:
@@ -326,7 +329,7 @@ def turn_in(todo_id):
     db.session.add(completed)
     db.session.delete(todo)
     if xp_added:
-        flash(f'{todo.xp} xp gained!', 'success')
+        flash(f'{xp_gained} xp gained!', 'success')
     if bonus:
         flash('5 quests in 1 day! BONUS XP +50', 'success')
     if todo.coins_received:
