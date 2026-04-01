@@ -277,7 +277,7 @@ def quest_log():
                         category=form.category.data,
                         completed=False,
                         user=current_user)
-        new_todo.xp = xp_value(new_todo)
+        new_todo.xp = xp_value(new_todo, current_user)
         new_todo.coins = coin_value(new_todo)
         db.session.add(new_todo)
         db.session.commit()
