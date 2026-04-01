@@ -231,8 +231,11 @@ def profile():
     user = current_user
     todos = user.todos
     user.title = LEVEL_TITLES.get(user.level, "Quester")
-    coins = user.current_coins
-    return render_template("profile.html", user=user, todos=todos, date=date)
+
+    page = request.args.get('page', 1, type=int)
+    query = CompletedQuest.query.filter_by(user_id=user.id)
+    completed = query.paginate(page=page, per_page=15)
+    return render_template("profile.html", user=user, todos=todos, date=date, completed=completed)
 
 @app.route("/QuestLog", methods=['GET', 'POST'])
 @login_required
