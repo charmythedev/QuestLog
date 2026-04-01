@@ -335,7 +335,7 @@ def turn_in(todo_id):
     if todo.coins_received:
         flash(f'+ {todo.coins} coins gained!', 'success')
     if multiplier(current_user) == 0.5:
-        flash(f"You're running low on steam, you only gained 1/2 xp", 'danger')
+        flash("You're running low on steam, you only gained 1/2 xp", "danger")
     db.session.commit()
 
     return redirect(url_for("quest_log"))
