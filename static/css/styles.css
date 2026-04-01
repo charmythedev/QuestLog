@@ -10918,4 +10918,8 @@ h1, h2, h3, h4, h5, h6,
     object-fit: contain;
 }
 
+.profile-card {
+  background: #fdf7e3;
+  border: 2px solid #d4c29c;
+}
 
