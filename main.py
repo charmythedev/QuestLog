@@ -22,6 +22,10 @@ ckeditor = CKEditor(app)
 Bootstrap5(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', "sqlite:///local.db")
 
+
+
+
+
 #### CREATE DATABASE ####
 class Base(DeclarativeBase):
     pass
@@ -93,10 +97,11 @@ def level_up(user):
 
 def gain_xp(user):
     current_xp = user.current_xp
+    mult = multiplier(user)
     for task in user.todos:
         if task.completed and not task.xp_given:
             user.quests_completed += 1
-            current_xp += task.xp
+            current_xp += task.xp * mult
             task.xp_given = True
     user.current_xp = current_xp
     db.session.commit()
@@ -113,9 +118,28 @@ def gain_coins(user):
     db.session.commit()
     return user.current_coins
 
+
+def multiplier(user):
+    today = datetime.today().date()
+    completed_today = sum(
+        1 for quest in user.completed_quests
+        if quest.date_completed.date() == today
+    )
+    if completed_today <= 9:
+        mult = 1.0
+    elif completed_today > 9:
+        mult = 0.5
+    else:
+        mult = 1.0
+    return mult
+
+
 def productive_xp(user):
     streak = 5
     today = datetime.today().date()
+    mult = multiplier(user)
+
+
 
 
     completed_today = sum(
@@ -125,21 +149,23 @@ def productive_xp(user):
 
     if completed_today >= streak and user.last_bonus_date != today:
         user.last_bonus_date = today
-        user.current_xp += 50
+        user.current_xp += user.next_level_xp//20 * mult
         db.session.commit()
         return True
 
     return False
 
-def xp_value(todo):
+def xp_value(todo, user):
+    base = user.next_level_xp
+
     xp_map = {
-        "main": 25,
-        "work": 15,
-        "errand": 10,
-        "daily": 10,
-        "side": 20,
-        "personal": 25,
-        "other": 10
+        "main": base//10,
+        "work": base//15,
+        "errand": base//20,
+        "daily": base//12,
+        "side": base//10,
+        "personal": base//10,
+        "other": base//22
     }
 
     return xp_map.get(todo.category, 5)
@@ -305,6 +331,8 @@ def turn_in(todo_id):
         flash('5 quests in 1 day! BONUS XP +50', 'success')
     if todo.coins_received:
         flash(f'+ {todo.coins} coins gained!', 'success')
+    if multiplier(current_user) == 0.5:
+        flash(f"You're running low on steam, you only gained 1/2 xp")
     db.session.commit()
 
     return redirect(url_for("quest_log"))
