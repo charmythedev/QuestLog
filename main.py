@@ -365,9 +365,18 @@ def logout():
     flash("You have logged out.", "info")
     return redirect(url_for('index'))
 
+@app.route("/shop")
+@login_required
+def shop():
+    user = current_user
+
+    return render_template("shop.html", user=user)
+
 if __name__ == "__main__":
     app.run(debug=False, port = 5002)
 
 
-# todo create dict to add titles to levels
+
+
+# todo create shop
 
