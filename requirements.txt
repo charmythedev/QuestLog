@@ -23,6 +23,9 @@ email-validator==2.1.1
 flask-migrate
 alembic
 sendgrid==6.11.0
+requests==2.31.0
+bleach==6.1.0
+
 
 
 
