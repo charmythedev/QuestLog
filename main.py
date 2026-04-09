@@ -14,9 +14,10 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 import os
 from itsdangerous import URLSafeTimedSerializer
-from smtplib import SMTP
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+
+import requests
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 
 #### FLASK CONFIG ######
@@ -264,43 +265,33 @@ def verify_reset_token(token, expiration=3600):
         return None
     return email
 
+
 def send_reset_email(user):
     token = generate_reset_token(user.email)
     reset_url = url_for('reset_password', token=token, _external=True)
 
-    sender_email = os.environ.get("GOOGLE_EMAIL")
-    sender_password = os.environ.get("GOOGLE_PASSWORD")
-    receiver_email = user.email
+    sender_email = os.environ.get("GOOGLE_EMAIL")  # your verified sender
+    api_key = os.environ.get("QUEST_LOG_SG_API")      # your SendGrid API key
 
-    subject = "Reset Your Password"
-    body = f"""
-    Hi {user.username},
+    message = Mail(
+        from_email=sender_email,
+        to_emails=user.email,
+        subject="Reset Your Password",
+        html_content=f"""
+        <p>Hi {user.username},</p>
+        <p>Click the link below to reset your password:</p>
+        <p><a href="{reset_url}">{reset_url}</a></p>
+        <p>If you did not request this, you can safely ignore this email.</p>
+        """
+    )
 
-    Click the link below to reset your password:
-
-    {reset_url}
-
-    If you did not request this, you can safely ignore this email.
-    """
-
-    # Build the email
-    msg = MIMEMultipart()
-    msg["From"] = sender_email
-    msg["To"] = receiver_email
-    msg["Subject"] = subject
-    msg.attach(MIMEText(body, "plain"))
-
-    # Send it
     try:
-        with SMTP("smtp.gmail.com", 587) as smtp:
-            smtp.starttls()  # REQUIRED
-            smtp.login(sender_email, sender_password)
-            smtp.send_message(msg)
-
-        print("Reset email sent successfully.")
-
+        sg = SendGridAPIClient(api_key)
+        response = sg.send(message)
+        print("SendGrid status:", response.status_code)
     except Exception as e:
-        print("Error sending email:", e)
+        print("SendGrid error:", e)
+
 
 
 @app.route('/reset-password', methods=['GET', 'POST'])
