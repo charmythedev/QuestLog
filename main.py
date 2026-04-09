@@ -13,6 +13,11 @@ from forms import *
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 import os
+from itsdangerous import URLSafeTimedSerializer
+from smtplib import SMTP
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 
 #### FLASK CONFIG ######
 date = datetime.now().year
@@ -246,6 +251,98 @@ def login():
             flash("(╯°□°）╯︵ ┻━┻ Login failed!", "danger")
 
     return render_template("login.html", form=form, date=date)
+
+def generate_reset_token(email):
+    s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return s.dumps(email, salt='password-reset-salt')
+
+def verify_reset_token(token, expiration=3600):
+    s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = s.loads(token, salt='password-reset-salt', max_age=expiration)
+    except:
+        return None
+    return email
+
+def send_reset_email(user):
+    token = generate_reset_token(user.email)
+    reset_url = url_for('reset_password', token=token, _external=True)
+
+    sender_email = os.environ.get("GOOGLE_EMAIL")
+    sender_password = os.environ.get("GOOGLE_PASSWORD")
+    receiver_email = user.email
+
+    subject = "Reset Your Password"
+    body = f"""
+    Hi {user.username},
+
+    Click the link below to reset your password:
+
+    {reset_url}
+
+    If you did not request this, you can safely ignore this email.
+    """
+
+    # Build the email
+    msg = MIMEMultipart()
+    msg["From"] = sender_email
+    msg["To"] = receiver_email
+    msg["Subject"] = subject
+    msg.attach(MIMEText(body, "plain"))
+
+    # Send it
+    try:
+        with SMTP("smtp.gmail.com", 587) as smtp:
+            smtp.starttls()  # REQUIRED
+            smtp.login(sender_email, sender_password)
+            smtp.send_message(msg)
+
+        print("Reset email sent successfully.")
+
+    except Exception as e:
+        print("Error sending email:", e)
+
+
+@app.route('/reset-password', methods=['GET', 'POST'])
+def reset_password_request():
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = db.session.execute(
+            db.select(User).where(User.email == form.email.data)
+        ).scalar_one_or_none()
+
+        if user:
+            send_reset_email(user)
+
+        flash("If that email exists, reset instructions have been sent.")
+        return redirect(url_for('login'))
+
+    return render_template('reset_password_request.html', form=form)
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    email = verify_reset_token(token)
+    if not email:
+        flash("Invalid or expired token.")
+        return redirect(url_for('reset_password_request'))
+
+    user = db.session.execute(
+        db.select(User).where(User.email == email)
+    ).scalar_one_or_none()
+
+    if not user:
+        flash("User not found.")
+        return redirect(url_for('reset_password_request'))
+
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=8)
+        user.password = hashed
+        db.session.commit()
+        flash("Password updated successfully.")
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html', form=form)
 
 
 @app.route("/")

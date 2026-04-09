@@ -32,6 +32,10 @@ class ResetPasswordRequestForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     submit = SubmitField("Reset Password")
 
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField("New Password", validators=[DataRequired()])
+    submit = SubmitField("Reset Password")
+
 
 
 class TodoForm(FlaskForm):

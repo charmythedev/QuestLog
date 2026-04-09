@@ -24,6 +24,7 @@ include "header.html" %}
                         {% endwith %}
 
                         {{ render_form(form) }}
+                        <a href="{{ url_for('reset_password_request') }}" class="text-muted">forgot password?</a>
 
                         <span class="subheading d-block mt-3">Welcome Back!</span>
                     </div>
