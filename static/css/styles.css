@@ -10923,3 +10923,7 @@ h1, h2, h3, h4, h5, h6,
   border: 2px solid #d4c29c;
 }
 
+.custom-muted {
+    color: #F1DD18 !important;
+}
+
