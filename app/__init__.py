@@ -4,15 +4,15 @@ from .auth import auth_bp
 from .quests import quests_bp
 from .main import main_bp
 from .shop import shop_bp
+from app.models import User
 from config import Config
 from datetime import datetime
 from flask_gravatar import Gravatar
+from sqlalchemy.exc import OperationalError
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-
-    # Initialize extensions FIRST
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
@@ -24,15 +24,19 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        # Import AFTER db.init_app
-        from app.models import User
-        return db.session.get(User, int(user_id))
+        try:
+            return db.session.get(User, int(user_id))
+        except OperationalError:
+            db.session.rollback()
+            return None
+
+
 
     @app.context_processor
     def inject_date():
         return {"date": datetime.now().year}
 
-    # Import models AFTER db.init_app
+
     with app.app_context():
         from app import models
         db.create_all()
