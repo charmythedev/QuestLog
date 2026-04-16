@@ -33,10 +33,11 @@ def gain_xp(user, amount=None):
 
 
 # todo return the xp gained not the total xp
-def gain_coins(user):
+def gain_coins(user, amount=0):
     current_coins = user.current_coins
     for task in user.todos:
         if task.completed and not task.coins_received:
+            amount = task.coins
 
             current_coins += task.coins
             task.coins_received = True
