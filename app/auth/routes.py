@@ -65,7 +65,7 @@ def login():
         if user and check_password_hash(user.password, password):
             login_user(user)
             flash('Welcome Back!', 'success')
-            return redirect(url_for('main.index'))
+            return redirect(url_for('quests.quest_log'))
         else:
             flash("(╯°□°）╯︵ ┻━┻ Login failed!", "danger")
 
