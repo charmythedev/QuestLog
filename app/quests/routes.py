@@ -95,6 +95,14 @@ def turn_in(todo_id):
         flash("You cannot turn in someone else's quest.", "danger")
         return redirect(url_for("quests.quest_log"))
 
+    # Mark completed so gain_xp() logic works
+    todo.completed = True
+
+    # Award XP + coins BEFORE deleting the quest
+    gain_xp(current_user, todo.xp)      # XP now works
+    gain_coins(current_user, todo.coins)  # Coins now work
+    level_up(current_user)
+
     # Move quest to CompletedQuest
     completed = CompletedQuest(
         user_id=current_user.id,
@@ -107,10 +115,6 @@ def turn_in(todo_id):
     db.session.delete(todo)
     db.session.commit()
 
-    # XP + coins logic
-    gain_xp(current_user, todo.xp)
-    gain_coins(current_user, todo.coins)
-    level_up(current_user)
-
     flash("Quest turned in!", "success")
+    flash(f"+{todo.coins} coins, and +{todo.xp} XP gained!", "success")
     return redirect(url_for("quests.quest_log"))
