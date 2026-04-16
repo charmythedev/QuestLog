@@ -62,12 +62,12 @@
                             </li>
                         </ul>
 
-                        <form action="{{ url_for('turn_in', todo_id=todo.id) }}" method="POST">
+                        <form action="{{ url_for('quests.turn_in', todo_id=todo.id) }}" method="POST">
                             <button type="submit" class="btn btn-success w-100">
                                 Turn In Quest
                             </button>
                         </form>
-                        <form action="{{ url_for('remove', todo_id=todo.id) }}" method="POST">
+                        <form action="{{ url_for('quests.remove', todo_id=todo.id) }}" method="POST">
                             <button type="submit" class="btn btn-danger w-100">
                                 Remove Quest
                             </button>
@@ -82,7 +82,7 @@
 
     {% if todos.has_prev %}
         <a class="btn btn-outline-primary mx-1"
-           href="{{ url_for('quest_log', page=todos.prev_num, sort=request.args.get('sort'), category=request.args.get('category')) }}">
+           href="{{ url_for('quests.quest_log', page=todos.prev_num, sort=request.args.get('sort'), category=request.args.get('category')) }}">
             Previous
         </a>
     {% endif %}
@@ -93,7 +93,7 @@
 
     {% if todos.has_next %}
         <a class="btn btn-outline-primary mx-1"
-           href="{{ url_for('quest_log', page=todos.next_num, sort=request.args.get('sort'), category=request.args.get('category')) }}">
+           href="{{ url_for('quests.quest_log', page=todos.next_num, sort=request.args.get('sort'), category=request.args.get('category')) }}">
             Next
         </a>
     {% endif %}

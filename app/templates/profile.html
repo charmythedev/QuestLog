@@ -65,12 +65,12 @@
 
                                         {% if not todo.completed %}
                                             <div class="d-flex flex-column gap-2" style="width: 120px;">
-                                                <form action="{{ url_for('remove', todo_id=todo.id) }}" method="POST">
+                                                <form action="{{ url_for('quests.remove', todo_id=todo.id) }}" method="POST">
                                                     <button type="submit" class="btn btn-danger btn-sm w-100">Remove
                                                     </button>
                                                 </form>
 
-                                                <form action="{{ url_for('turn_in', todo_id=todo.id) }}" method="POST">
+                                                <form action="{{ url_for('quests.turn_in', todo_id=todo.id) }}" method="POST">
                                                     <button type="submit" class="btn btn-success btn-sm w-100">Turn In
                                                     </button>
                                                 </form>
@@ -119,7 +119,7 @@
 
                         {% if completed.has_prev %}
                             <a class="btn btn-outline-primary mx-1"
-                               href="{{ url_for('profile', page=completed.prev_num) }}">
+                               href="{{ url_for('main.profile', page=completed.prev_num) }}">
                                 Previous
                             </a>
                         {% endif %}
@@ -130,7 +130,7 @@
 
                         {% if completed.has_next %}
                             <a class="btn btn-outline-primary mx-1"
-                               href="{{ url_for('profile', page=completed.next_num) }}">
+                               href="{{ url_for('main.profile', page=completed.next_num) }}">
                                 Next
                             </a>
                         {% endif %}
