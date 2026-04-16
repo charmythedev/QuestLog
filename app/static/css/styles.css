@@ -10843,7 +10843,7 @@ textarea.form-control-lg {
     content: "";
     position: absolute;
     inset: 0;
-    background-image: url('/static/images/parchment_texture.png');
+    background-image: url('/static/assets/parchment_texture.png');
     background-size: cover;
     opacity: 0.25;
     pointer-events: none;

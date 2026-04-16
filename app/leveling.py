@@ -15,17 +15,23 @@ def level_up(user):
 
     return False
 
-def gain_xp(user):
+
+def gain_xp(user, amount=None):
     current_xp = user.current_xp
+
     mult = multiplier(user)
     for task in user.todos:
         if task.completed and not task.xp_given:
+            amount = task.xp
             user.quests_completed += 1
             current_xp += task.xp * mult
             task.xp_given = True
+
     user.current_xp = current_xp
     db.session.commit()
     return user.current_xp
+
+
 # todo return the xp gained not the total xp
 def gain_coins(user):
     current_coins = user.current_coins
