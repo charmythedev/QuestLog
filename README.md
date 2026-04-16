@@ -78,17 +78,35 @@ This project helped strengthen my skills in:
 ## 📁 Project Structure
 ```
 QuestLog/
-├── static/
-│ └── css/
-├── templates/
-│ ├── base.html
-│ ├── index.html
-│ └── quests.html
-├── models.py
-├── routes.py
-├── main.py
+├── app/
+│   ├── __init__.py
+│   ├── extensions.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── quest.py
+│   ├── quests/
+│   │   ├── __init__.py
+│   │   ├── routes.py
+│   │   └── services.py
+│   ├── main/
+│   │   ├── __init__.py
+│   │   └── routes.py
+│   ├── templates/
+│   │   ├── base.html
+│   │   ├── index.html
+│   │   └── quests/
+│   │       └── quest_log.html
+│   └── static/
+│       └── css/
+│           └── styles.css
+│
+├── migrations/      
+│
+├── config.py
+├── run.py
 ├── requirements.txt
 └── README.md
+
 ```
 
 ## ⚙️ Local Setup
@@ -101,7 +119,7 @@ cd QuestLog
 python -m venv venv
 source venv/bin/activate  # Windows: venv\\Scripts\\activate
 pip install -r requirements.txt
-flask run
+python run.py
 ```
 
 Visit: http://localhost:5000 in your browser
