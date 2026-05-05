@@ -53,3 +53,46 @@ class User(UserMixin, db.Model):
 
     todos = relationship("Todo", back_populates="user", cascade="all, delete")
     completed_quests = relationship("CompletedQuest", back_populates="user", cascade="all, delete")
+    inventory: Mapped["Inventory"] = relationship(
+        "Inventory",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan"
+    )
+
+class Item(db.Model):
+    __tablename__ = "items"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(250), nullable=False)
+    base_price: Mapped[int] = mapped_column(Integer, nullable=False)
+    rarity: Mapped[str] = mapped_column(String(250), nullable=False)
+    description: Mapped[str] = mapped_column(String(250), nullable=False)
+
+    inventory = relationship("Inventory", back_populates="item")
+    shop_inventory = relationship("ShopInventory", back_populates="item")
+
+
+
+
+
+class Inventory(db.Model):
+    __tablename__ = "inventory"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
+    item_id: Mapped[int] = mapped_column(Integer, ForeignKey("items.id"))
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    item = relationship("Item", back_populates="inventory")
+    user = relationship("User", back_populates="inventory")
+
+class ShopInventory(db.Model):
+    __tablename__ = "shop_inventory"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
+    item_id: Mapped[int] = mapped_column(Integer, ForeignKey("items.id"))
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    item = relationship("Item", back_populates="shop_inventory")
+    user = relationship("User", back_populates="shop_inventory")
+
+
