@@ -56,9 +56,10 @@ class User(UserMixin, db.Model):
     inventory: Mapped["Inventory"] = relationship(
         "Inventory",
         back_populates="user",
-        uselist=False,
+
         cascade="all, delete-orphan"
     )
+    shop_inventory = relationship("ShopInventory", back_populates="user")
 
 class Item(db.Model):
     __tablename__ = "items"
