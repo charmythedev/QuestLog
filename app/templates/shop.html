@@ -12,6 +12,7 @@
         <div class="card-body">
 
             <h4 class="card-title">{{ shop_item.item.name }}</h4>
+            <img src="{{ url_for('static', filename=shop_item.item.image_path) }}" alt="{{ shop_item.item.name }}">
 
             <ul class="list-unstyled mb-3">
                 <li>
