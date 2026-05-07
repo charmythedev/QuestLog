@@ -51,3 +51,11 @@ class TodoForm(FlaskForm):
         ],
         validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+class ShopForm(FlaskForm):
+    quantity = SelectField(
+        "Quantity",
+        choices=[(1, "1"), (5, "5"), (10, "10"), (20, "20"), (50, "50")],
+        coerce=int
+    )
+

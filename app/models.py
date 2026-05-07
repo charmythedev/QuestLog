@@ -68,6 +68,8 @@ class Item(db.Model):
     base_price: Mapped[int] = mapped_column(Integer, nullable=False)
     rarity: Mapped[str] = mapped_column(String(250), nullable=False)
     description: Mapped[str] = mapped_column(String(250), nullable=False)
+    can_restock: Mapped[bool] = mapped_column(Boolean, default=True)
+    restock_quantity: Mapped[int] = mapped_column(Integer, nullable=False, default= 50)
 
     inventory = relationship("Inventory", back_populates="item")
     shop_inventory = relationship("ShopInventory", back_populates="item")

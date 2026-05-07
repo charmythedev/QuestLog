@@ -1,13 +1,33 @@
 {% include "header.html" %}
 
 <body>
+
+{% if shop_inventory %}
+
+{% for row in shop_inventory %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100 border-0 quest-card">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ row.item.name }}</h4>
+                        <ul class="list-unstyled mb-3">
+                            <li><strong>{{ row.item.base_price }} <img src="{{ url_for('static', filename='assets/coin.png') }}" alt="coin"
+                                     class="coin-icon"></strong></li>
+                            <li><strong> in stock:{{ row.quantity }}</strong></li>
+                            <li>{{ row.item.description }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+{% endfor %}
+{% else %}
+
 <h1>Shop</h1>
 <h2>coming soon!</h2>
-<img class="img-fluid w-25" src="{{ url_for('static', filename='assets/merchant.png') }}"/>
 
+{% endif %}
 
 
 
 </body>
-</html>
+
 {% include "footer.html" %}

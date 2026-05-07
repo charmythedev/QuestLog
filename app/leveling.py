@@ -121,5 +121,7 @@ LEVEL_TITLES = {
     7: "Master of Minor Miracles",
     8: "Relentless Progress Adept",
     9: "Champion of Checked Boxes",
-    10: "Grand Archmage of Getting Stuff Done"
+    10: "Grand Archmage of Getting Stuff Done",
+    11: "The Productive One",
+    12: "Hero of Tasks",
 }
