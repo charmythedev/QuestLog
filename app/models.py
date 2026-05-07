@@ -94,7 +94,7 @@ class ShopInventory(db.Model):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
     item_id: Mapped[int] = mapped_column(Integer, ForeignKey("items.id"))
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
-
+    last_restock: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     item = relationship("Item", back_populates="shop_inventory")
     user = relationship("User", back_populates="shop_inventory")
 
