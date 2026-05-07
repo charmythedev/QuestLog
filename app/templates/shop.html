@@ -1,66 +1,69 @@
 {% include "header.html" %}
 
- <div class="col-md-6 col-lg-5">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                    {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show text-center"
-                         role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                    </div>
-<body>
-
-{% if shop %}
-<h1 class="text-center mt-4">Welcome to the Shop</h1>
-
-
-
-<div class="row">
-{% for shop_item in shop.items %}
-<div class="col-md-6 col-lg-4">
-    <div class="card shadow-sm h-100 border-0 quest-card">
-        <div class="card-body">
-
-            <h4 class="card-title">{{ shop_item.item.name }}</h4>
-            <img src="{{ url_for('static', filename=shop_item.item.image_path) }}" alt="{{ shop_item.item.name }}">
-
-            <ul class="list-unstyled mb-3">
-                <li>
-                    <strong>
-                        {{ shop_item.item.base_price }}
-                        <img src="{{ url_for('static', filename='assets/coin.png') }}"
-                             alt="coin"
-                             class="coin-icon">
-                    </strong>
-                </li>
-
-                <li><strong>In stock: {{ shop_item.quantity }}</strong></li>
-
-                <li>{{ shop_item.item.description }}</li>
-
-                <form action="{{ url_for('shop.buy_item', shop_item_id=shop_item.id) }}" method="POST">
-                    {{ form.hidden_tag() }}
-                    {{ form.quantity(class="form-select form-select-sm") }}
-
-                    <button class="btn btn-primary btn-sm mt-2">Buy</button>
-                </form>
-            </ul>
-
-        </div>
+<div class="col-md-6 col-lg-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show text-center"
+         role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                aria-label="Close"></button>
     </div>
-</div>
-{% endfor %}
-</div>
+    {% endif %}
+    {% endwith %}
+    {% endfor %}
+    <body>
 
-{% else %}
+    {% if shop %}
+    <h1 class="text-center mt-4">Welcome to the Shop</h1>
 
-<h1>Shop</h1>
-<h2>coming soon!</h2>
 
-{% endif %}
+    <div class="row">
+        {% for shop_item in shop.items %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 quest-card">
+                <div class="card-body">
 
-</body>
+                    <h4 class="card-title">{{ shop_item.item.name }}</h4>
+                    <img src="{{ url_for('static', filename=shop_item.item.image_path) }}"
+                         alt="{{ shop_item.item.name }}">
 
-{% include "footer.html" %}
+                    <ul class="list-unstyled mb-3">
+                        <li>
+                            <strong>
+                                {{ shop_item.item.base_price }}
+                                <img src="{{ url_for('static', filename='assets/coin.png') }}"
+                                     alt="coin"
+                                     class="coin-icon">
+                            </strong>
+                        </li>
+
+                        <li><strong>In stock: {{ shop_item.quantity }}</strong></li>
+
+                        <li>{{ shop_item.item.description }}</li>
+
+                        <form action="{{ url_for('shop.buy_item', shop_item_id=shop_item.id) }}" method="POST">
+                            {{ form.hidden_tag() }}
+                            {{ form.quantity(class="form-select form-select-sm") }}
+
+                            <button class="btn btn-primary btn-sm mt-2">Buy</button>
+                        </form>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+
+    <h1>Shop</h1>
+    <h2>coming soon!</h2>
+
+    {% endif %}
+
+    </body>
+
+    {% include "footer.html" %}
