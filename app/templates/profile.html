@@ -34,6 +34,14 @@
                                 {{ user.current_xp }} / {{ user.next_level_xp }} XP
                             </div>
                         </div>
+                        <!-- steam Bar -->
+                        <div class="progress mb-3" style="height: 20px;">
+                            <div class="progress-bar bg-info"
+                                 role="progressbar"
+                                 style="width: {{ (user.steam / user.max_steam) * 100 }}%;">
+                                {{ user.steam }} / {{ user.max_steam }} Steam
+                            </div>
+                        </div>
                         <!--                        add some badges and coin stuff here-->
 
 
@@ -105,6 +113,16 @@
                         <strong>{{ row.item.name }}</strong><br>
                         <img src="{{url_for('static', filename=row.item.image_path) }}" alt="item image">
                         <small class="text-muted">{{ row.item.description }}</small>
+                        {% if row.item.consumable %}
+                        <form action="{{ url_for('main.use_item', item_id=row.item.id) }}"
+                              method="POST" class="mt-2">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Use
+                            </button>
+                        </form>
+                        {% endif %}
+
+
                     </div>
 
                     <span class="badge bg-primary rounded-pill">

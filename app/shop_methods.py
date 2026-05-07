@@ -7,6 +7,57 @@ from app.extensions import db
 # initial item add using if statements
 # also need to distinguish one-time items from buyables/restockables restock flag?
 
+from app.models import Item
+from app.extensions import db
+
+ITEM_DEFINITIONS = [
+    {
+        "name": "Steam Potion",
+        "base_price": 100,
+        "rarity": "common",
+        "description": "A bottle full of steam, restores energy.",
+        "image_path": "items/steam_potion.png",
+        "can_restock": True,
+        "restock_quantity": 10,
+        "effect_value": 5,
+        "consumable": True,
+    },
+    {
+        "name": "Wooden Hammer",
+        "base_price": 500,
+        "rarity": "rare",
+        "description": "A sturdy wooden hammer.",
+        "image_path": "items/hammer.png",
+        "can_restock": False,
+        "restock_quantity": 1,
+        "effect_value": 0,
+        "consumable": False,
+    },
+    # Add more items here...
+]
+
+
+def seed_items():
+    for data in ITEM_DEFINITIONS:
+        item = Item.query.filter_by(name=data["name"]).first()
+
+        if item:
+            # Update existing item
+            for key, value in data.items():
+                setattr(item, key, value)
+        else:
+            # Create new item
+            item = Item(**data)
+            db.session.add(item)
+
+    db.session.commit()
+    print("Items seeded/updated successfully.")
+
+
+def use_item(item):
+    if item.name == "Steam Potion":
+        pass
+
 
 
 def restock_shop(shop):
@@ -16,34 +67,6 @@ def restock_shop(shop):
         if item.can_restock:
             shop_item.quantity = item.restock_quantity
 
-
-def seed_items():
-    if Item.query.count() > 0:
-        return  # already seeded
-
-    items = [
-        Item(name="Steam Potion", base_price=100, rarity="common",
-             description="A bottle full of steam, allows adventurers to keep questing",
-             image_path= "items/steam_potion.png",
-             restock_quantity=10),
-
-        Item(name="Wooden Hammer", base_price=500, rarity="rare",
-             description="A useful tool", can_restock=False, restock_quantity=1,
-             image_path= "items/wooden_hammer.png"),
-
-        Item(name="Wooden Planks", base_price=10, rarity="common",
-             description="Cedar planks for building all sorts of things",
-             restock_quantity=100),
-
-        Item(name="Nails", base_price=5, rarity="common",
-             description="Quick, cheap iron fasteners",
-             restock_quantity=100)
-    ]
-
-    for i in items:
-        db.session.add(i)
-
-    db.session.commit()
 
 def seed_shop_for_user(user):
     # If shop exists, do nothing

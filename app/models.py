@@ -47,6 +47,8 @@ class User(UserMixin, db.Model):
     current_xp: Mapped[int] = mapped_column(Integer, default=0)
     next_level_xp: Mapped[int] = mapped_column(Integer, default=100)
     current_coins: Mapped[int] = mapped_column(Integer, default=0)
+    steam: Mapped[int] = mapped_column(Integer, default=10)
+    max_steam: Mapped[int] = mapped_column(Integer, default=10)
 
     quests_completed: Mapped[int] = mapped_column(Integer, default=0)
     last_bonus_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
@@ -73,6 +75,8 @@ class Item(db.Model):
     image_path: Mapped[str | None ] = mapped_column(String(250), nullable=True, default="items/default.png")
     can_restock: Mapped[bool] = mapped_column(Boolean, default=True)
     restock_quantity: Mapped[int] = mapped_column(Integer, nullable=False, default= 50)
+    effect_value: Mapped[int] = mapped_column(Integer, nullable=True, default= 0)
+    consumable: Mapped[bool] = mapped_column(Boolean, default=False)
 
     inventory_items = relationship("InventoryItem", back_populates="item")
 

@@ -2,6 +2,7 @@
 
 from flask import render_template, redirect, url_for, flash
 from flask_login import login_required, current_user
+from ..leveling import multiplier
 
 from . import shop_bp
 from ..forms import ShopForm
@@ -23,8 +24,6 @@ def shop():
     form = ShopForm()
     now = datetime.datetime.now()
     seed_items()
-
-
     # Ensure the user has a shop
     if user.shop is None:
 
@@ -107,3 +106,5 @@ def buy_item(shop_item_id):
 
     flash(f"{qty} {item.name} added to inventory.", "success")
     return redirect(url_for("shop.shop"))
+
+

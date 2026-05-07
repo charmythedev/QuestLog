@@ -67,9 +67,6 @@ def productive_xp(user):
     today = datetime.today().date()
     mult = multiplier(user)
 
-
-
-
     completed_today = sum(
         1 for quest in user.completed_quests
         if quest.date_completed.date() == today

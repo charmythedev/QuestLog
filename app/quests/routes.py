@@ -102,6 +102,7 @@ def turn_in(todo_id):
     gain_xp(current_user, todo.xp)      # XP now works
     gain_coins(current_user, todo.coins)  # Coins now work
     level_up(current_user)
+    current_user.steam -= 1
 
     # Move quest to CompletedQuest
     completed = CompletedQuest(
