@@ -26,6 +26,7 @@ def index():
 def profile():
     user = current_user
     todos = user.todos
+    inventory = user.inventory
 
     # Update title based on level
     user.title = LEVEL_TITLES.get(user.level, "Quester")
@@ -39,5 +40,6 @@ def profile():
         "profile.html",
         user=user,
         todos=todos,
-        completed=completed
+        completed=completed,
+        inventory=inventory
     )

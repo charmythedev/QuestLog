@@ -53,37 +53,37 @@
                         <h4 class="mb-4">Active Quests</h4>
 
                         {% if todos %}
-                            <ul class="list-group">
-                                {% for todo in todos %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>{{ todo.title }}</strong><br>
-                                            <small class="text-muted">
-                                                {{ todo.category }} quest • {{ todo.xp }} XP
-                                            </small>
-                                        </div>
+                        <ul class="list-group">
+                            {% for todo in todos %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ todo.title }}</strong><br>
+                                    <small class="text-muted">
+                                        {{ todo.category }} quest • {{ todo.xp }} XP
+                                    </small>
+                                </div>
 
-                                        {% if not todo.completed %}
-                                            <div class="d-flex flex-column gap-2" style="width: 120px;">
-                                                <form action="{{ url_for('quests.remove', todo_id=todo.id) }}" method="POST">
-                                                    <button type="submit" class="btn btn-danger btn-sm w-100">Remove
-                                                    </button>
-                                                </form>
+                                {% if not todo.completed %}
+                                <div class="d-flex flex-column gap-2" style="width: 120px;">
+                                    <form action="{{ url_for('quests.remove', todo_id=todo.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-danger btn-sm w-100">Remove
+                                        </button>
+                                    </form>
 
-                                                <form action="{{ url_for('quests.turn_in', todo_id=todo.id) }}" method="POST">
-                                                    <button type="submit" class="btn btn-success btn-sm w-100">Turn In
-                                                    </button>
-                                                </form>
-                                            </div>
+                                    <form action="{{ url_for('quests.turn_in', todo_id=todo.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-success btn-sm w-100">Turn In
+                                        </button>
+                                    </form>
+                                </div>
 
-                                        {% else %}
-                                            <span class="badge bg-secondary">Completed</span>
-                                        {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                                {% else %}
+                                <span class="badge bg-secondary">Completed</span>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
                         {% else %}
-                            <p class="text-muted">No quests yet. Visit the Quest Log to begin your journey.</p>
+                        <p class="text-muted">No quests yet. Visit the Quest Log to begin your journey.</p>
                         {% endif %}
 
                     </div>
@@ -91,54 +91,85 @@
             </div>
 
         </div>
+        <div class="card mt-3">
+            <div class="card-header">
+                <h4>Your Inventory</h4>
+            </div>
+
+            <ul class="list-group list-group-flush">
+
+                {% if inventory %}
+                {% for row in inventory.items %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ row.item.name }}</strong><br>
+                        <img src="{{url_for('static', filename=row.item.image_path) }}" alt="item image">
+                        <small class="text-muted">{{ row.item.description }}</small>
+                    </div>
+
+                    <span class="badge bg-primary rounded-pill">
+                        x{{ row.quantity }}
+                    </span>
+                </li>
+                <hr>
+                {% endfor %}
+                {% else %}
+                <li class="list-group-item text-muted">
+                    Your inventory is empty. Buy something from the shop to get started.
+                </li>
+                {% endif %}
+
+            </ul>
+        </div>
+
 
         {% if user.completed_quests %}
-            <div class="card shadow-sm border-0 my-4 quest-card">
-                <div class="card-body">
+        <div class="card shadow-sm border-0 my-4 quest-card">
+            <div class="card-body">
 
-                    <h2 class="mb-4">
-                        Completed Quests ({{ completed.total }})
-                    </h2>
+                <h2 class="mb-4">
+                    Completed Quests ({{ completed.total }})
+                </h2>
 
-                    <ul class="list-group list-group-flush">
-                        {% for quest in completed.items %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                <ul class="list-group list-group-flush">
+                    {% for quest in completed.items %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
 
                     <span class="text-decoration-line-through fw-semibold">
                         {{ quest.title }}
                     </span>
 
-                                <small class="text-muted">
-                                    {{ quest.date_completed.strftime("%b %d, %Y") }}
-                                </small>
+                        <small class="text-muted">
+                            {{ quest.date_completed.strftime("%b %d, %Y") }}
+                        </small>
 
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <div class="d-flex justify-content-center my-4">
+                    </li>
+                    {% endfor %}
+                </ul>
+                <div class="d-flex justify-content-center my-4">
 
-                        {% if completed.has_prev %}
-                            <a class="btn btn-outline-primary mx-1"
-                               href="{{ url_for('main.profile', page=completed.prev_num) }}">
-                                Previous
-                            </a>
-                        {% endif %}
+                    {% if completed.has_prev %}
+                    <a class="btn btn-outline-primary mx-1"
+                       href="{{ url_for('main.profile', page=completed.prev_num) }}">
+                        Previous
+                    </a>
+                    {% endif %}
 
-                        <span class="mx-3 align-self-center">
+                    <span class="mx-3 align-self-center">
         Page {{ completed.page }} of {{ completed.pages }}
     </span>
 
-                        {% if completed.has_next %}
-                            <a class="btn btn-outline-primary mx-1"
-                               href="{{ url_for('main.profile', page=completed.next_num) }}">
-                                Next
-                            </a>
-                        {% endif %}
-
-                    </div>
+                    {% if completed.has_next %}
+                    <a class="btn btn-outline-primary mx-1"
+                       href="{{ url_for('main.profile', page=completed.next_num) }}">
+                        Next
+                    </a>
+                    {% endif %}
 
                 </div>
+
             </div>
+        </div>
         {% endif %}
     </div>
 

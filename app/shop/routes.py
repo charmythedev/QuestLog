@@ -6,84 +6,104 @@ from flask_login import login_required, current_user
 from . import shop_bp
 from ..forms import ShopForm
 import datetime
-from ..models import ShopInventory, Inventory
-from ..shop_methods import restock
+from app.models import (
+    ShopItem,
+    Inventory,
+    InventoryItem,
+    Item
+)
+
+from ..shop_methods import restock_shop, seed_items, seed_shop_for_user
 from app.extensions import db
 
 @shop_bp.route("/shop", endpoint="shop")
 @login_required
 def shop():
-    # todo: restock shop (every day or so), logic for if a user buys an item (separate function), render shop items in html (loop) (almost)
     user = current_user
     form = ShopForm()
-
-
-
-    shop_inventory = user.shop_inventory
     now = datetime.datetime.now()
-    last_restock =  shop_inventory.last_restock
+    seed_items()
 
 
-    if last_restock is None:
-        restock(user)
-        shop_inventory.last_restock = now
+    # Ensure the user has a shop
+    if user.shop is None:
+
+        seed_shop_for_user(user)
+
+    shop = user.shop
+
+    # Restock if needed
+    if shop.last_restock is None:
+        restock_shop(shop)
+        shop.last_restock = now
         db.session.commit()
 
     else:
-        delta = now - last_restock
+        delta = now - shop.last_restock
         if delta >= datetime.timedelta(hours=24):
-            restock(user)
-            shop_inventory.last_restock = now
+            restock_shop(shop)
+            shop.last_restock = now
             db.session.commit()
 
-    return render_template("shop.html", user=user, shop_inventory=shop_inventory, form = form)
-
-@shop_bp.route("/buy/<int:item_id>", methods=["POST"], endpoint="buy_item")
+    return render_template("shop.html", shop=shop, form=form)
+@shop_bp.route("/buy/<int:shop_item_id>", methods=["POST"], endpoint="buy_item")
 @login_required
-def buy_item(item_id):
+def buy_item(shop_item_id):
     form = ShopForm()
 
     if not form.validate_on_submit():
-        return redirect(url_for("shop"))
+        return redirect(url_for("shop.shop"))
 
     user = current_user
-    quantity = form.quantity.data
+    qty = form.quantity.data
 
-    shop_item = ShopInventory.query.filter_by(id=item_id).first()
+    shop_item = ShopItem.query.get_or_404(shop_item_id)
     item = shop_item.item
 
-    cost = quantity * item.base_price
+    cost = item.base_price * qty
 
-    if shop_item.quantity < quantity:
-        flash("not enough stock in shop.", "danger")
-        return redirect(url_for("shop"))
+    # Check stock
+    if shop_item.quantity < qty:
+        flash("Not enough stock in the shop.", "danger")
+        return redirect(url_for("shop.shop"))
 
-
+    # Check coins
     if user.current_coins < cost:
-        flash("not enough coins.", "danger")
-        return redirect(url_for("shop"))
+        flash("Not enough coins.", "danger")
+        return redirect(url_for("shop.shop"))
 
+    # Deduct coins
     user.current_coins -= cost
 
-    inv = Inventory.query.filter_by(user_id=user.id,
-                                    item_id=item.id
-                                    ).first()
-    if not inv:
-        inv = Inventory(user_id=user.id, item_id=item.id, quantity = 0)
-        db.session.add(inv)
-    inv.quantity += quantity
+    # Reduce shop stock
+    shop_item.quantity -= qty
 
-    shop_item.quantity -= quantity
+    # --- NEW INVENTORY SYSTEM ---
+    # Get or create the user's inventory (one per user)
+    inventory = user.inventory
+    if inventory is None:
+        inventory = Inventory(user_id=user.id)
+        db.session.add(inventory)
+        db.session.flush()  # ensures inventory.id exists
+
+    # Find or create the InventoryItem entry
+    inv_item = InventoryItem.query.filter_by(
+        inventory_id=inventory.id,
+        item_id=item.id
+    ).first()
+
+    if not inv_item:
+        inv_item = InventoryItem(
+            inventory_id=inventory.id,
+            item_id=item.id,
+            quantity=0
+        )
+        db.session.add(inv_item)
+
+    # Add quantity
+    inv_item.quantity += qty
+
     db.session.commit()
 
-
-
-    flash(f"{quantity} {item.name} added to inventory.", "success")
-    return redirect(url_for("shop"))
-
-    # continue later
-    # todo: render shop/ quantity form
-    # todo: check if player has enough money/shop has inventory etc.
-    #todo: buttons for buying in shop
-    # todo: do i need new endpoint? i guess so.
-
+    flash(f"{qty} {item.name} added to inventory.", "success")
+    return redirect(url_for("shop.shop"))
