@@ -17,6 +17,7 @@ from app.models import (
 from ..shop_methods import restock_shop, seed_items, seed_shop_for_user
 from app.extensions import db
 
+
 @shop_bp.route("/shop", endpoint="shop")
 @login_required
 def shop():
@@ -30,6 +31,11 @@ def shop():
         seed_shop_for_user(user)
 
     shop = user.shop
+
+    ###debug###
+    debug = True
+    if debug:
+        restock_shop(shop)
 
     # Restock if needed
     if shop.last_restock is None:
