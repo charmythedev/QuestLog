@@ -27,7 +27,7 @@ ITEM_DEFINITIONS = [
         "base_price": 500,
         "rarity": "rare",
         "description": "A sturdy wooden hammer.",
-        "image_path": "items/hammer.png",
+        "image_path": "items/wooden_hammer.png",
         "can_restock": False,
         "restock_quantity": 1,
         "effect_value": 0,
@@ -38,7 +38,7 @@ ITEM_DEFINITIONS = [
         "base_price": 5,
         "rarity": "common",
         "description": "Cheap, sturdy iron fasteners",
-
+        "image_path": "items/nails.png",
         "can_restock": False,
         "restock_quantity": 200,
         "effect_value": 0,
@@ -49,7 +49,7 @@ ITEM_DEFINITIONS = [
         "base_price": 500,
         "rarity": "common",
         "description": "Cedar planks, useful for building just about anything",
-
+        "image_path": "items/planks.png",
         "can_restock": True,
         "restock_quantity": 100,
         "effect_value": 0,
