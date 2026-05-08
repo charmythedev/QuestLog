@@ -25,17 +25,15 @@ def shop():
     form = ShopForm()
     now = datetime.datetime.now()
     seed_items()
-    # Ensure the user has a shop
-    if user.shop is None:
-
-        seed_shop_for_user(user)
+    seed_shop_for_user(user)
 
     shop = user.shop
 
-    ###debug###
+    ###shop debug###
     debug = True
     if debug:
         restock_shop(shop)
+    #########
 
     # Restock if needed
     if shop.last_restock is None:

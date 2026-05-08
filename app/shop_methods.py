@@ -91,23 +91,34 @@ def restock_shop(shop):
 
 
 def seed_shop_for_user(user):
-    # If shop exists, do nothing
-    if user.shop is not None:
-        return
+    # 1. Create shop if missing
+    if user.shop is None:
+        shop = Shop(user_id=user.id, last_restock=None)
+        db.session.add(shop)
+        db.session.commit()
+    else:
+        shop = user.shop
 
-    shop = Shop(user_id=user.id, last_restock=None)
-    db.session.add(shop)
-    db.session.commit()
+    # 2. Ensure every item exists in the shop
+    existing_items = {si.item_id: si for si in shop.items}
 
-    # Add items to the shop
     for item in Item.query.all():
-        db.session.add(ShopItem(
-            shop_id=shop.id,
-            item_id=item.id,
-            quantity=item.restock_quantity
-        ))
+        if item.id not in existing_items:
+            # New item added to the game → add to shop
+            new_shop_item = ShopItem(
+                shop_id=shop.id,
+                item_id=item.id,
+                quantity=item.restock_quantity
+            )
+            db.session.add(new_shop_item)
+        else:
+            # Existing item → update restock quantity if needed
+            shop_item = existing_items[item.id]
+            if item.can_restock:
+                shop_item.quantity = item.restock_quantity
 
     db.session.commit()
+
 
 
 
