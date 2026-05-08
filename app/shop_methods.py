@@ -33,7 +33,29 @@ ITEM_DEFINITIONS = [
         "effect_value": 0,
         "consumable": False,
     },
-    # Add more items here...
+    {
+        "name": "Nails",
+        "base_price": 5,
+        "rarity": "common",
+        "description": "Cheap, sturdy iron fasteners",
+
+        "can_restock": False,
+        "restock_quantity": 200,
+        "effect_value": 0,
+        "consumable": False,
+    },
+    {
+        "name": "Wooden Planks",
+        "base_price": 500,
+        "rarity": "common",
+        "description": "Cedar planks, useful for building just about anything",
+
+        "can_restock": True,
+        "restock_quantity": 100,
+        "effect_value": 0,
+        "consumable": False,
+    },
+
 ]
 
 
