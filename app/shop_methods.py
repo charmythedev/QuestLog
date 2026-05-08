@@ -46,7 +46,7 @@ ITEM_DEFINITIONS = [
     },
     {
         "name": "Wooden Planks",
-        "base_price": 500,
+        "base_price": 10,
         "rarity": "common",
         "description": "Cedar planks, useful for building just about anything",
         "image_path": "items/planks.png",
@@ -118,7 +118,6 @@ def seed_shop_for_user(user):
                 shop_item.quantity = item.restock_quantity
 
     db.session.commit()
-
 
 
 

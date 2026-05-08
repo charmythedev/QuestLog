@@ -18,7 +18,7 @@ def level_up(user):
 
 def gain_xp(user, amount=None):
     current_xp = user.current_xp
-
+#todo change multiplier to accept steam as currency vs count
     mult = multiplier(user)
     for task in user.todos:
         if task.completed and not task.xp_given:
