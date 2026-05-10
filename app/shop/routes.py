@@ -33,12 +33,15 @@ def shop():
     debug = True
     if debug:
         restock_shop(shop)
+        flash("shop restocked! (debug)", "success")
+        db.session.commit()
     #########
 
     # Restock if needed
     if shop.last_restock is None:
         restock_shop(shop)
         shop.last_restock = now
+        flash("shop restocked (and created).", "success")
         db.session.commit()
 
     else:
@@ -46,6 +49,7 @@ def shop():
         if delta >= datetime.timedelta(hours=24):
             restock_shop(shop)
             shop.last_restock = now
+            flash("shop restocked! (timer)", "success")
             db.session.commit()
 
     return render_template("shop.html", shop=shop, form=form)
