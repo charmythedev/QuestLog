@@ -39,7 +39,7 @@ ITEM_DEFINITIONS = [
         "rarity": "common",
         "description": "Cheap, sturdy iron fasteners",
         "image_path": "items/nails.png",
-        "can_restock": False,
+        "can_restock": True,
         "restock_quantity": 200,
         "effect_value": 0,
         "consumable": False,

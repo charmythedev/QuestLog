@@ -24,24 +24,32 @@ def shop():
     user = current_user
     form = ShopForm()
     now = datetime.datetime.now()
+
     seed_items()
     seed_shop_for_user(user)
 
     shop = user.shop
 
+    for shop_item in shop.items:
+        item = shop_item.item
+        if shop_item.quantity == 0 and not item.can_restock:
+            db.session.delete(shop_item)
+    db.session.commit()
+
     ###shop debug###
-    debug = True
-    if debug:
-        restock_shop(shop)
-        flash("shop restocked! (debug)", "success")
-        db.session.commit()
+    # debug = True
+    # if debug:
+    #     # restock_shop(shop)
+    #     # flash("shop restocked! (debug)", "success")
+    #     # user.current_coins += 10000
+    #     # db.session.commit()
     #########
 
     # Restock if needed
     if shop.last_restock is None:
         restock_shop(shop)
         shop.last_restock = now
-        flash("shop restocked (and created).", "success")
+        flash("shop created).", "success")
         db.session.commit()
 
     else:
