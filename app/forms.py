@@ -55,7 +55,7 @@ class TodoForm(FlaskForm):
 class ShopForm(FlaskForm):
     quantity = SelectField(
         "Quantity",
-        choices=[(1, "1"), (5, "5"), (10, "10"), (20, "20"), (50, "50")],
+        choices=[(1, "1"), (5, "5"), (10, "10"), (20, "20"), (50, "50"), (100, "100")],
         coerce=int
     )
 

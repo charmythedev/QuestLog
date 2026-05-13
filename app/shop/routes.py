@@ -28,6 +28,7 @@ def shop():
     seed_items()
     seed_shop_for_user(user)
 
+
     shop = user.shop
 
     for shop_item in shop.items:
@@ -36,14 +37,14 @@ def shop():
             db.session.delete(shop_item)
     db.session.commit()
 
-    ###shop debug###
+    ##shop debug###
     # debug = True
     # if debug:
     #     # restock_shop(shop)
     #     # flash("shop restocked! (debug)", "success")
-    #     # user.current_coins += 10000
-    #     # db.session.commit()
-    #########
+    #     user.current_coins += 10000
+    #     db.session.commit()
+    ########
 
     # Restock if needed
     if shop.last_restock is None:

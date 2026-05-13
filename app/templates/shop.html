@@ -45,7 +45,9 @@
                             </strong>
                         </li>
 
-                        <li><strong>In stock: {{ shop_item.quantity }}</strong></li>
+                        <span class="badge bg-primary rounded-pill">
+                        x {{ shop_item.quantity }}
+                        </span>
 
                         <li>{{ shop_item.item.description }}</li>
 

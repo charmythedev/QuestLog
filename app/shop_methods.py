@@ -29,7 +29,7 @@ ITEM_DEFINITIONS = [
         "description": "A sturdy wooden hammer.",
         "image_path": "items/wooden_hammer.png",
         "can_restock": False,
-        "restock_quantity": 1,
+        "restock_quantity": 0,
         "effect_value": 0,
         "consumable": False,
     },
@@ -111,11 +111,6 @@ def seed_shop_for_user(user):
                 quantity=item.restock_quantity
             )
             db.session.add(new_shop_item)
-        else:
-            # Existing item → update restock quantity if needed
-            shop_item = existing_items[item.id]
-            if item.can_restock:
-                shop_item.quantity = item.restock_quantity
 
     db.session.commit()
 
