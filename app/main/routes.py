@@ -30,6 +30,12 @@ def profile():
     todos = user.todos
     inventory = user.inventory
 
+    # prevent negative steam
+    if user.steam < 0:
+        user.steam = 0
+    db.session.commit()
+
+
     # Update title based on level
     user.title = LEVEL_TITLES.get(user.level, "Quester")
 
