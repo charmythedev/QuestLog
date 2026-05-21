@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from ..leveling import multiplier
 
 from . import shop_bp
-from ..forms import ShopForm
+from ..forms import ShopForm, AltShopForm
 import datetime
 from app.models import (
     ShopItem,
@@ -22,14 +22,21 @@ from app.extensions import db
 @login_required
 def shop():
     user = current_user
-    form = ShopForm()
+    # form = ShopForm()
     now = datetime.datetime.now()
 
     seed_items()
     seed_shop_for_user(user)
 
 
+
     shop = user.shop
+    forms = {}
+
+    for shop_item in shop.items:
+        f = AltShopForm()
+        f.set_quantities(shop_item.quantity)
+        forms[shop_item.id] = f
 
     for shop_item in shop.items:
         item = shop_item.item
@@ -38,13 +45,13 @@ def shop():
     db.session.commit()
 
     ##shop debug###
-    # debug = True
-    # if debug:
-    #     # restock_shop(shop)
-    #     # flash("shop restocked! (debug)", "success")
-    #     user.current_coins += 10000
-    #     db.session.commit()
-    ########
+    debug = False
+    if debug:
+        restock_shop(shop)
+        flash("shop restocked! (debug)", "success")
+        # user.current_coins += 10000
+        db.session.commit()
+    #######
 
     # Restock if needed
     if shop.last_restock is None:
@@ -61,11 +68,15 @@ def shop():
             flash("shop restocked! (timer)", "success")
             db.session.commit()
 
-    return render_template("shop.html", shop=shop, form=form)
+    return render_template("shop.html", shop=shop, forms=forms, user=user)
 @shop_bp.route("/buy/<int:shop_item_id>", methods=["POST"], endpoint="buy_item")
 @login_required
 def buy_item(shop_item_id):
-    form = ShopForm()
+    shop_item = ShopItem.query.get_or_404(shop_item_id)
+    item = shop_item.item
+    form = AltShopForm()
+    form.set_quantities(shop_item.quantity)
+
 
     if not form.validate_on_submit():
         return redirect(url_for("shop.shop"))
@@ -73,10 +84,10 @@ def buy_item(shop_item_id):
     user = current_user
     qty = form.quantity.data
 
-    shop_item = ShopItem.query.get_or_404(shop_item_id)
-    item = shop_item.item
+
 
     cost = item.base_price * qty
+
 
     # Check stock
     if shop_item.quantity < qty:

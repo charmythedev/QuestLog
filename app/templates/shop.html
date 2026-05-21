@@ -5,73 +5,82 @@
         <div class="col-md-6 col-lg-5">
 
             {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show text-center" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show text-center" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
             {% endwith %}
 
         </div>
     </div>
 </div>
 
-    <body>
+<body>
 
-    {% if shop %}
-    <h1 class="text-center mt-4">Welcome to the Shop</h1>
+{% if shop %}
+<h1 class="text-center mt-4">Welcome to the Shop</h1>
+
+<div class="text-center mt-2">
+    <p class="mb-1">Current coins:</p>
+    <div class="coins-display">
+        <img src="{{ url_for('static', filename='assets/coin.png') }}"
+             alt="coin"
+             class="coin-icon">
+        <span class="text-muted"><em>{{ user.current_coins }}</em></span>
+    </div>
+</div>
 
 
-    <div class="row">
-        {% for shop_item in shop.items %}
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm h-100 border-0 quest-card">
-                <div class="card-body">
+<div class="row">
+    {% for shop_item in shop.items %}
+    <div class="card shadow-sm h-100 border-0 quest-card">
+        <div class="card-body position-relative">
 
-                    <h4 class="card-title">{{ shop_item.item.name }}</h4>
-                    <img src="{{ url_for('static', filename=shop_item.item.image_path) }}"
-                         alt="{{ shop_item.item.name }}">
-
-                    <ul class="list-unstyled mb-3">
-                        <li>
-                            <strong>
-                                {{ shop_item.item.base_price }}
-                                <img src="{{ url_for('static', filename='assets/coin.png') }}"
-                                     alt="coin"
-                                     class="coin-icon">
-                            </strong>
-                        </li>
-
-                        <span class="badge bg-primary rounded-pill">
-                        x {{ shop_item.quantity }}
-                        </span>
-
-                        <li>{{ shop_item.item.description }}</li>
-
-                        <form action="{{ url_for('shop.buy_item', shop_item_id=shop_item.id) }}" method="POST">
-                            {{ form.hidden_tag() }}
-                            {{ form.quantity(class="form-select form-select-sm") }}
-
-                            <button class="btn btn-primary btn-sm mt-2">Buy</button>
-                        </form>
-                    </ul>
-
-                </div>
+            <!-- PRICE BADGE IN TOP RIGHT -->
+            <div class="price-badge">
+                <img src="{{ url_for('static', filename='assets/coin.png') }}"
+                     alt="coin"
+                     class="coin-icon">
+                <span>{{ shop_item.item.base_price }}</span>
             </div>
+
+            <h4 class="card-title">{{ shop_item.item.name }}</h4>
+
+            <img src="{{ url_for('static', filename=shop_item.item.image_path) }}"
+                 alt="{{ shop_item.item.name }}">
+
+            <ul class="list-unstyled mb-3">
+            <span class="badge bg-primary rounded-pill">
+                x {{ shop_item.quantity }}
+            </span>
+
+                <li>{{ shop_item.item.description }}</li>
+
+                <form action="{{ url_for('shop.buy_item', shop_item_id=shop_item.id) }}" method="POST">
+                    {{ forms[shop_item.id].hidden_tag() }}
+                    {{ forms[shop_item.id].quantity(class="form-select form-select-sm") }}
+                    <button class="btn btn-primary btn-sm mt-2">Buy</button>
+                </form>
+
+            </ul>
+
         </div>
-        {% endfor %}
     </div>
 
-    {% else %}
+    {% endfor %}
+</div>
 
-    <h1>Shop</h1>
-    <h2>coming soon!</h2>
+{% else %}
 
-    {% endif %}
+<h1>Shop</h1>
+<h2>coming soon!</h2>
 
-    </body>
+{% endif %}
 
-    {% include "footer.html" %}
+</body>
+
+{% include "footer.html" %}

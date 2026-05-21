@@ -55,7 +55,15 @@ class TodoForm(FlaskForm):
 class ShopForm(FlaskForm):
     quantity = SelectField(
         "Quantity",
-        choices=[(1, "1"), (5, "5"), (10, "10"), (20, "20"), (50, "50"), (100, "100")],
+        choices=[(1,"1"),(5,"5"),(10,"10"),(20, "20"),(100,'100')],
         coerce=int
     )
+class AltShopForm(FlaskForm):
+    quantity = SelectField("Quantity", coerce=int)
+
+    def set_quantities(self, max_stock):
+        base = [1, 5, 10 , 20, 50, 100, max_stock]
+        unique = sorted(set(base))
+        valid = [(q, str(q)) for q in unique if q <= max_stock]
+        self.quantity.choices = valid
 

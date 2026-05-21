@@ -21,9 +21,14 @@
 
                         <h3 class="mb-0">{{ user.username }}</h3>
                         <p class="text-muted"><em>{{ user.title }}</em></p>
-                        <p class="text-muted"><em>{{ user.current_coins }}<img
-                                src="{{ url_for('static', filename='assets/coin.png') }}" alt="coin image"
-                                class="coin-icon"></em></p>
+                        <div class="coins-display">
+                            <img src="{{ url_for('static', filename='assets/coin.png') }}"
+                                 alt="coin"
+                                 class="coin-icon">
+                            <p class="text-muted"><em>{{ user.current_coins }}</em></p>
+                        </div>
+
+
                         <p class="text-muted">Level {{ user.level }}</p>
 
                         <!-- XP Bar -->

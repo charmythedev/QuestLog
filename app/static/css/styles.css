@@ -10927,3 +10927,50 @@ h1, h2, h3, h4, h5, h6,
     color: #F1DD18 !important;
 }
 
+.price {
+    display: inline-flex;
+    align-items: center;
+    gap: 0px;   /* controls spacing between number and icon */
+}
+
+.coin-icon {
+    height: 25px;
+    position: relative;
+    right: -8px;
+}
+.coins-display {
+    display: inline-flex;
+    align-items: center;
+    justify-content: left;
+    gap: 1px; /* tighten or loosen spacing */
+    margin: 0;
+    padding: 0;
+    left: -10px
+}
+
+.price-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+
+    background: rgba(255, 255, 255, 0.85);
+    padding: 4px 8px;
+    border-radius: 12px;
+
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.price-badge .coin-icon {
+    height: 18px;
+    width: 18px;
+    object-fit: contain;
+}
+
+
+
+
