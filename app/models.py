@@ -52,6 +52,7 @@ class User(UserMixin, db.Model):
 
     quests_completed: Mapped[int] = mapped_column(Integer, default=0)
     last_bonus_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    last_login: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     todos = relationship("Todo", back_populates="user", cascade="all, delete")
     completed_quests = relationship("CompletedQuest", back_populates="user", cascade="all, delete")

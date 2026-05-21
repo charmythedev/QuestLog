@@ -3,12 +3,12 @@
 from flask import render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from datetime import datetime
 from app.extensions import db
 from app.models import User
 from app.email_utils import send_reset_email, verify_reset_token
 from app.forms import RegisterForm, LoginForm, ResetPasswordRequestForm, ResetPasswordForm
-
+from .. import leveling
 from . import auth_bp
 
 
@@ -64,8 +64,12 @@ def login():
 
         if user and check_password_hash(user.password, password):
             login_user(user)
+            leveling.reset_steam(user)
+            user.last_login = datetime.today().date()
+            db.session.commit()
             flash('Welcome Back!', 'success')
             return redirect(url_for('quests.quest_log'))
+
         else:
             flash("(╯°□°）╯︵ ┻━┻ Login failed!", "danger")
 

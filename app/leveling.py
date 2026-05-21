@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from .extensions import db
 
 ###### levelling logic #####
@@ -60,6 +60,12 @@ def multiplier(user):
     else:
         mult = 1.0
     return mult
+
+def reset_steam(user):
+    today = datetime.today().date()
+
+    if user.last_login != today:
+        user.steam = user.max_steam
 
 
 def productive_xp(user):
