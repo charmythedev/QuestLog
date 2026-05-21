@@ -53,9 +53,9 @@ def multiplier(user):
         1 for quest in user.completed_quests
         if quest.date_completed.date() == today
     )
-    if completed_today <= 9:
+    if user.steam > 0:
         mult = 1.0
-    elif completed_today > 9:
+    elif user.steam <= 0:
         mult = 0.5
     else:
         mult = 1.0
@@ -84,9 +84,9 @@ def xp_value(todo, user):
     base = user.next_level_xp
 
     xp_map = {
-        "main": base//10,
-        "work": base//15,
-        "errand": base//20,
+        "main": base//6,
+        "work": base//13,
+        "errand": base//15,
         "daily": base//12,
         "side": base//10,
         "personal": base//10,
