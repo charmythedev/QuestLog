@@ -120,4 +120,4 @@ def turn_in(todo_id):
 
     flash("Quest turned in!", "success")
     flash(f"+{todo.coins} coins, and +{todo.xp} XP gained!", "success")
-    return redirect(url_for("quests.quest_log"))
+    return redirect(url_for("quests.quest_log", page=page))

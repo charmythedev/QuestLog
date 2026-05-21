@@ -64,7 +64,7 @@ def multiplier(user):
 def reset_steam(user):
     today = datetime.today().date()
 
-    if user.last_login != today:
+    if user.last_login.date() != today:
         user.steam = user.max_steam
 
 

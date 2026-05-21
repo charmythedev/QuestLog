@@ -10979,6 +10979,18 @@ h1, h2, h3, h4, h5, h6,
   font-style: normal;
 }
 
+.coins-display p {
+    margin: 0;
+    line-height: 1;
+    position: relative;
+    top: 2px;   /* adjust 1–3px if needed */
+}
+
+
+.quest-action-column {
+    width: 120px;   /* or whatever width you want */
+    flex-shrink: 0; /* prevents Bootstrap from squeezing it */
+}
 
 
 
