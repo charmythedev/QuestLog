@@ -66,7 +66,8 @@ def quest_log():
         "quest_log.html",
         user=user,
         todos=todos,
-        form=form
+        form=form,
+        page=page
     )
 
 @quests_bp.route("/remove/<int:todo_id>", methods=["POST"], endpoint="remove")
@@ -89,11 +90,12 @@ def remove(todo_id):
 @login_required
 def turn_in(todo_id):
     todo = Todo.query.get_or_404(todo_id)
+    page = request.args.get("page", 1, type=int )
 
     # Ensure user owns the quest
     if todo.user_id != current_user.id:
         flash("You cannot turn in someone else's quest.", "danger")
-        return redirect(url_for("quests.quest_log"))
+        return redirect(url_for("quests.quest_log", page=page))
 
     # Mark completed so gain_xp() logic works
     todo.completed = True

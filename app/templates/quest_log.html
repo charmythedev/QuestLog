@@ -51,18 +51,22 @@
             <div class="col-md-6 col-lg-4">
                 <div class="card shadow-sm h-100 border-0 quest-card">
                     <div class="card-body">
-                        <h4 class="card-title">{{ todo.title }}</h4>
+                        <h4 class="card-title zeyada-regular">{{ todo.title }}</h4>
                         <ul class="list-unstyled mb-3">
                             <li><strong>Date:</strong> {{ todo.date.strftime("%b %d, %Y") }}</li>
                             <li><strong>Type:</strong> {{ todo.category }} quest</li>
-                            <li><strong>Rewards:</strong> {{ todo.xp }} XP,
-                                {{ todo.coins }}
-                                <img src="{{ url_for('static', filename='assets/coin.png') }}" alt="coin"
-                                     class="coin-icon">
+                            <li><strong>Rewards:</strong> {{ todo.xp }} XP
+                                <div class="price-badge">
+                                    <img src="{{ url_for('static', filename='assets/coin.png') }}"
+                                         alt="coin"
+                                         class="coin-icon">
+                                    {{ todo.coins }}
+                                </div>
+
                             </li>
                         </ul>
 
-                        <form action="{{ url_for('quests.turn_in', todo_id=todo.id) }}" method="POST">
+                        <form action="{{ url_for('quests.turn_in', todo_id=todo.id, page=page) }}" method="POST">
                             <button type="submit" class="btn btn-success w-100">
                                 Turn In Quest
                             </button>
@@ -77,44 +81,44 @@
             </div>
             {% endfor %}
         </div>
-{#    pagination #}
-    <div class="d-flex justify-content-center my-4">
+        {# pagination #}
+        <div class="d-flex justify-content-center my-4">
 
-    {% if todos.has_prev %}
-        <a class="btn btn-outline-primary mx-1"
-           href="{{ url_for('quests.quest_log', page=todos.prev_num, sort=request.args.get('sort'), category=request.args.get('category')) }}">
-            Previous
-        </a>
-    {% endif %}
+            {% if todos.has_prev %}
+            <a class="btn btn-outline-primary mx-1"
+               href="{{ url_for('quests.quest_log', page=todos.prev_num, sort=request.args.get('sort'), category=request.args.get('category')) }}">
+                Previous
+            </a>
+            {% endif %}
 
-    <span class="mx-3 align-self-center">
+            <span class="mx-3 align-self-center">
         Page {{ todos.page }} of {{ todos.pages }}
     </span>
 
-    {% if todos.has_next %}
-        <a class="btn btn-outline-primary mx-1"
-           href="{{ url_for('quests.quest_log', page=todos.next_num, sort=request.args.get('sort'), category=request.args.get('category')) }}">
-            Next
-        </a>
-    {% endif %}
+            {% if todos.has_next %}
+            <a class="btn btn-outline-primary mx-1"
+               href="{{ url_for('quests.quest_log', page=todos.next_num, sort=request.args.get('sort'), category=request.args.get('category')) }}">
+                Next
+            </a>
+            {% endif %}
 
-</div>
-
-    </div>
-        <hr>
-        <br>
-
-        <div class="container my-4">
-
-            <div class="row g-4"></div>
-            <h1 class="mb-4 text-center">New Quest</h1>
-            {{ render_form(form) }}
-            <main class="mb-4">
-
-                <br>
-                <hr>
-                {% include "footer.html" %}
-            </main>
         </div>
+
     </div>
+    <hr>
+    <br>
+
+    <div class="container my-4">
+
+        <div class="row g-4"></div>
+        <h1 class="mb-4 text-center">New Quest</h1>
+        {{ render_form(form) }}
+        <main class="mb-4">
+
+            <br>
+            <hr>
+            {% include "footer.html" %}
+        </main>
+    </div>
+</div>
 </div>
