@@ -28,7 +28,6 @@
                 <select name="sort" class="form-select">
                     <option value="">Sort By</option>
                     <option value="date">Newest</option>
-
                     <option value="title">Title</option>
                     <option value="xp">xp</option>
                 </select>
@@ -66,12 +65,12 @@
                             </li>
                         </ul>
 
-                        <form action="{{ url_for('quests.turn_in', todo_id=todo.id, page=page) }}" method="POST">
+                        <form action="{{ url_for('quests.turn_in', todo_id=todo.id, page=page, category=category, sort=sort) }}" method="POST">
                             <button type="submit" class="btn btn-success w-100">
                                 Turn In Quest
                             </button>
                         </form>
-                        <form action="{{ url_for('quests.remove', todo_id=todo.id) }}" method="POST">
+                        <form action="{{ url_for('quests.remove', todo_id=todo.id, page=page, category=category, sort=sort) }}" method="POST">
                             <button type="submit" class="btn btn-danger w-100">
                                 Remove Quest
                             </button>

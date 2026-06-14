@@ -25,6 +25,9 @@ from . import quests_bp
 def quest_log():
     user = current_user
     form = TodoForm()
+    sort = request.args.get("sort")
+    category = request.args.get("category")
+    page = request.args.get("page", 1, type=int)
 
     # Create new quest
     if form.validate_on_submit():
@@ -42,10 +45,9 @@ def quest_log():
         db.session.commit()
 
         flash("New Quest Added!", "success")
-        return redirect(url_for("quests.quest_log"))   # ← FIXED
+        return redirect(url_for("quests.quest_log", sort=sort, category=category, page=page))   # ← FIXED
     # Sorting
-    sort = request.args.get("sort")
-    category = request.args.get("category")
+
 
     query = Todo.query.filter_by(user_id=user.id)
 
@@ -59,7 +61,7 @@ def quest_log():
     elif sort == "xp":
         query = query.order_by(Todo.xp.desc())
 
-    page = request.args.get("page", 1, type=int)
+
     todos = query.paginate(page=page, per_page=9)
 
     return render_template(
@@ -67,13 +69,18 @@ def quest_log():
         user=user,
         todos=todos,
         form=form,
-        page=page
+        page=page,
+        sort=sort,
+        category=category
     )
 
 @quests_bp.route("/remove/<int:todo_id>", methods=["POST"], endpoint="remove")
 @login_required
 def remove(todo_id):
     todo = Todo.query.get_or_404(todo_id)
+    page = request.args.get("page", 1, type=int)
+    sort = request.args.get("sort")
+    category = request.args.get("category")
 
     # Make sure the user owns this quest
     if todo.user_id != current_user.id:
@@ -84,13 +91,15 @@ def remove(todo_id):
     db.session.commit()
 
     flash("Quest removed!", "success")
-    return redirect(url_for("quests.quest_log"))
+    return redirect(url_for("quests.quest_log", sort=sort, category=category, page=page))
 
 @quests_bp.route("/turn-in/<int:todo_id>", methods=["POST"], endpoint="turn_in")
 @login_required
 def turn_in(todo_id):
     todo = Todo.query.get_or_404(todo_id)
     page = request.args.get("page", 1, type=int )
+    sort = request.args.get("sort")
+    category = request.args.get("category")
 
     # Ensure user owns the quest
     if todo.user_id != current_user.id:
@@ -120,4 +129,4 @@ def turn_in(todo_id):
 
     flash("Quest turned in!", "success")
     flash(f"+{todo.coins} coins, and +{todo.xp} XP gained!", "success")
-    return redirect(url_for("quests.quest_log", page=page))
+    return redirect(url_for("quests.quest_log", page=page, sort=sort, category=category))
